@@ -1,3 +1,15 @@
+## Requirment:
+- pip3 and python3
+- mySql
+- mySql workbench
+- mysql-connector run: `pip3 intall mysql-connector`
+
+## USEFUL LINK:
+- learn simple py + mysql https://youtu.be/x7SwgcpACng 
+- column flag in mysql https://stackoverflow.com/questions/3663952/what-do-column-flags-mean-in-mysql-workbench
+- json -> mysql https://stackoverflow.com/questions/41952552/python-how-to-parse-and-save-json-to-mysql-database
+
+
 - function dependency : prime attibute -> non-prime attibute
 
 # 2NF
