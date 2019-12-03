@@ -1,3 +1,8 @@
+## mySQL
+- Delete all rows in the table: `TRUNCATE TABLE table_name;`
+- Show table: `SELECT * FROM schema_name.table_name;`
+
+
 ## Requirment:
 - pip3 and python3
 - mySql
