@@ -1,15 +1,13 @@
 import sys
 import mysql.connector
 import json
+# import threading
+import time
+
 
 SUBREDDIT = "Subreddit"
 COMMENT = "Comment"
 LINK = "Link"
-
-null = None
-true = True
-false = False
-
 def connect ():
     try:
         mydb = mysql.connector.connect(
@@ -19,8 +17,15 @@ def connect ():
             db=str(sys.argv[2])
         )
     except Exception as e:
+        print(e)
         sys.exit("Can't connect to database")
     return mydb
+
+def readFile ():
+    fileHandler = open (sys.argv[3], "r")
+    data = fileHandler.readlines()
+    fileHandler.close()
+    return  data
 
 def saveToDatabase (cursor, table, item):
     if table == SUBREDDIT:
@@ -36,21 +41,33 @@ def saveToDatabase (cursor, table, item):
         val = (item["id"], item["name"], item["author"], item["created_utc"], item["parent_id"], item["body"], item["score"] )
         cursor.execute(mySql_insert_query, val)
 
+# def thread_function(mydb, item):
+#     cursor = mydb.cursor()
+#     j = json.loads(item)
+#     saveToDatabase(cursor, SUBREDDIT, j)
+#     saveToDatabase(cursor, COMMENT, j)
+#     saveToDatabase(cursor, LINK, j)
+#     mydb.commit()
 
-data = [{"parent_id": "t3_5yba3", "created_utc": "1192450635", "ups": 1, "controversiality": 0, "distinguished": null, "subreddit_id": "t5_6", "id": "c0299an", "downs": 0, "archived": true, "link_id": "t3_5yba3", "score": 1, "author": "bostich", "score_hidden": false, "body": "test", "gilded": 0, "author_flair_text": null, "subreddit": "reddit.com", "edited": false, "author_flair_css_class": null, "name": "t1_c0299an", "retrieved_on": 1427426409},
-        {"author_flair_text": null, "gilded": 0, "score_hidden": false, "body": "[deleted]", "score": 1, "link_id": "t3_5yba3", "author": "[deleted]", "name": "t1_c0299aq", "retrieved_on": 1427426409, "author_flair_css_class": null,
-            "subreddit": "reddit.com", "edited": false, "ups": 1, "controversiality": 0, "created_utc": "1192450646", "parent_id": "t3_5yba3", "archived": true, "downs": 0, "subreddit_id": "t5_6", "id": "c0299aq", "distinguished": null},
-        {"edited": false, "subreddit": "reddit.com", "author_flair_css_class": null, "name": "t1_c0299ar", "retrieved_on": 1427426409, "author": "gigaquack", "link_id": "t3_5yba3", "score": 3, "body": "Oh, I see. Fancy schmancy \"submitting....\"",
-            "score_hidden": false, "author_flair_text": null, "gilded": 0, "distinguished": null, "subreddit_id": "t5_6", "id": "c0299ar", "downs": 0, "archived": true, "created_utc": "1192450646", "parent_id": "t1_c0299ah", "controversiality": 0, "ups": 3}
-        ]
 
-if len(sys.argv) - 1 <= 1:
-    print('ERROR!! python3 db.py [password] [NameDatabase]')
+if len(sys.argv) - 1 <= 2:
+    print('ERROR!! python3 db.py [password] [NameDatabase] [FileAbsolutePath]')
 else:
     mydb = connect()
+    data = readFile()
+    # threads = list()
+    start_time = time.time()
     for item in data: # insert data to subreddit table
+
+        ## Threadding
+        # x = threading.Thread(target=thread_function, args=(mydb,item))
+        # threads.append(x)
+        # x.start()
+        # x.join()
         cursor = mydb.cursor()
-        saveToDatabase(cursor, SUBREDDIT, item)
-        saveToDatabase(cursor, COMMENT, item)
-        saveToDatabase(cursor, LINK, item)
+        j = json.loads(item)
+        saveToDatabase(cursor, SUBREDDIT, j)
+        saveToDatabase(cursor, COMMENT, j)
+        saveToDatabase(cursor, LINK, j)
         mydb.commit()
+    print("--- %s seconds ---" % (time.time() - start_time))
