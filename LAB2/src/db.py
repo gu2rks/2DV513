@@ -1,7 +1,7 @@
 import sys
 import mysql.connector
 import json
-# import threading
+import threading
 import time
 
 
@@ -24,13 +24,6 @@ def connect(): # connect to mysql database
     return mydb
 
 
-def readFile(): # read file
-    fileHandler = open(sys.argv[3], "r")
-    data = fileHandler.readlines()
-    fileHandler.close()
-    return data
-
-
 def saveToDatabase(cursor, table, item): # insert data in mysql table by table
     if table == SUBREDDIT: # insert in subreddit table
         mySql_insert_query = 'INSERT INTO Subreddit (id, name) VALUES (%s, %s) ' 
@@ -43,7 +36,7 @@ def saveToDatabase(cursor, table, item): # insert data in mysql table by table
     else:   # insert to Comment table
         mySql_insert_query = 'INSERT INTO Comment (id, name, author, createdUTC, parentID, body, score) VALUES (%s, %s, %s, %s, %s, %s, %s)'
         val = (item["id"], item["name"], item["author"], item["created_utc"],
-               item["parent_id"], item["body"], item["score"])
+               item["parent_id"], str(item["body"]), item["score"])
         cursor.execute(mySql_insert_query, val)
 
 # def thread_function(mydb, item):
@@ -55,22 +48,33 @@ def saveToDatabase(cursor, table, item): # insert data in mysql table by table
 #     mydb.commit()
 
 if len(sys.argv) - 1 <= 2:
-    print('ERROR!! python3 db.py [password] [NameDatabase] [FileAbsolutePath]')
+    print('## ERROR!! python3 db.py [password] [NameDatabase] [FileAbsolutePath]')
+    sys.exit()
 else:
+    count = 0
     mydb = connect()
-    data = readFile() 
     # threads = list()
+    cursor = mydb.cursor()
+    cursor.execute('SET NAMES utf8mb4')
+    cursor.execute("SET CHARACTER SET utf8mb4")
+    cursor.execute("SET character_set_connection=utf8mb4")
     start_time = time.time()
-    for item in data:
-        # Threadding
-        # x = threading.Thread(target=thread_function, args=(mydb,item))
-        # threads.append(x)
-        # x.start()
-        # x.join()
-        cursor = mydb.cursor()
-        j = json.loads(item) # convert to item to json
-        saveToDatabase(cursor, SUBREDDIT, j)
-        saveToDatabase(cursor, LINK, j)
-        saveToDatabase(cursor, COMMENT, j)
-        mydb.commit() # commit changes in databes
-    print("--- %s seconds ---" % (time.time() - start_time))
+    try:
+        with open(sys.argv[3], 'r') as data:
+            for line in data:
+                j = json.loads(line) # convert to item to json
+                saveToDatabase(cursor, SUBREDDIT, j)
+                saveToDatabase(cursor, LINK, j)
+                saveToDatabase(cursor, COMMENT, j)
+                count += 1
+                print('added %s in the database'  %count)
+                mydb.commit() # commit changes in databes
+        
+                # Threadding
+                # x = threading.Thread(target=thread_function, args=(mydb,line))
+                # threads.append(x)
+                # x.start()
+                # x.join()
+        print("--- %s seconds ---" % (time.time() - start_time))
+    except FileNotFoundError:
+        print('## ERROR: FILE NOT FOUND, wrong path')
