@@ -30,13 +30,13 @@ def saveToDatabase(cursor, table, item): # insert data in mysql table by table
         val = (item["subreddit_id"], item["subreddit"])
         cursor.execute(mySql_insert_query, val)
     elif table == LINK: # insert to Link table
-        mySql_insert_query = 'INSERT INTO Link (id) VALUES (%s)'
-        val = (item["link_id"],)
+        mySql_insert_query = 'INSERT INTO Link (id, subreddit_id) VALUES (%s, %s)'
+        val = (item["link_id"], item["subreddit_id"])
         cursor.execute(mySql_insert_query, val)
     else:   # insert to Comment table
-        mySql_insert_query = 'INSERT INTO Comment (id, name, author, createdUTC, parentID, body, score) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+        mySql_insert_query = 'INSERT INTO Comment (id, name, author, createdUTC, parentID, body, score, link_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
         val = (item["id"], item["name"], item["author"], item["created_utc"],
-               item["parent_id"], str(item["body"]), item["score"])
+               item["parent_id"], str(item["body"]), item["score"], item["link_id"])
         cursor.execute(mySql_insert_query, val)
 
 # def thread_function(mydb, item):
