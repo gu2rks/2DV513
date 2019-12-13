@@ -3,6 +3,7 @@ import mysql.connector
 import json
 import threading
 import time
+from datetime import datetime
 
 
 SUBREDDIT = "Subreddit"
@@ -35,7 +36,7 @@ def saveToDatabase(cursor, table, item): # insert data in mysql table by table
         cursor.execute(mySql_insert_query, val)
     else:   # insert to Comment table
         mySql_insert_query = 'INSERT IGNORE INTO Comment (id, name, author, createdUTC, parentID, body, score, link_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
-        val = (item["id"], item["name"], item["author"], item["created_utc"],
+        val = (item["id"], item["name"], item["author"], datetime.fromtimestamp(int(item["created_utc"])),
                item["parent_id"], str(item["body"]), item["score"], item["link_id"])
         cursor.execute(mySql_insert_query, val)
 
@@ -55,6 +56,7 @@ else:
     mydb = connect()
     # threads = list()
     cursor = mydb.cursor()
+    # fixing utf problem
     cursor.execute('SET NAMES utf8mb4')
     cursor.execute("SET CHARACTER SET utf8mb4")
     cursor.execute("SET character_set_connection=utf8mb4")
