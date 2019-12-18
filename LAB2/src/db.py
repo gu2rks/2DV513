@@ -52,7 +52,6 @@ if len(sys.argv) - 1 <= 2:
     print('## ERROR!! python3 db.py [password] [NameDatabase] [FileAbsolutePath]')
     sys.exit()
 else:
-    count = 0
     mydb = connect()
     # threads = list()
     cursor = mydb.cursor()
@@ -68,8 +67,6 @@ else:
                 saveToDatabase(cursor, SUBREDDIT, j)
                 saveToDatabase(cursor, LINK, j)
                 saveToDatabase(cursor, COMMENT, j)
-                count += 1
-                # print('added %s in the database'  %count)
                 mydb.commit() # commit changes in databes
         
                 # Threadding
