@@ -12,7 +12,7 @@ def bookView(): # book manu
     print('Press 3: delete book')
     return int(input('# '))
 
-def AddBook():
+def addBook():
     name = input('[+] Name: ')
     author = input('[+] Author: ')
     edit = int(input('[+] Edition: '))
