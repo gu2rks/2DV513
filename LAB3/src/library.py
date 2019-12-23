@@ -3,10 +3,6 @@ import mysql.connector
 import view as viewer #import view
 
 class Controller:
-    # operation code
-    OP1 = 'BOOK'
-    OP2 = 'MEMBER'
-
     def __init__(self, cursor):
         while (True): 
             choice = viewer.homeView() # call main menu
@@ -22,11 +18,11 @@ class Controller:
             else:
                 viewer.invalidInput()
 
-    def bookHandler(selft, cursor):
+    def bookHandler(self, cursor):
         choice = viewer.bookView()
         if (choice == 1):
             book = viewer.addBook() # book as tuple
-            self.saveToDatabase(cursor, OP1, book)
+            self.insertToDatabase(cursor, "book", book)
         elif (choice == 2):
             print('edit')
         elif (choice == 3):
@@ -38,12 +34,16 @@ class Controller:
     @item = book or member
     """
     def insertToDatabase(self, cursor, op ,item):
-        if (op == OP1): # add book
+        if (op == 'book'): # add book
             print('save book to database')
-        elif( op == OP2):
+            print(item)
+            # do some sql here
+        elif( op == 'member'):
             print('save member to database')
+            # do some sql here
         else:
             print('save loan details')
+            # do some sql here
 
 
 

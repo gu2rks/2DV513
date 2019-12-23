@@ -12,12 +12,12 @@ def bookView(): # book manu
     print('Press 3: delete book')
     return int(input('# '))
 
-def addBook():
+def addBook(): # add book
     name = input('[+] Name: ')
     author = input('[+] Author: ')
     edit = int(input('[+] Edition: '))
     bType = input('[+] Type: ')
-    book = (name, author, edit, bType)
+    book = (name, author, edit, bType) # save as tuple
     return book
 
 def invalidInput():
