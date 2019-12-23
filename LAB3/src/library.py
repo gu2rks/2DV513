@@ -3,26 +3,38 @@ import mysql.connector
 import view as viewer #import view
 
 class Controller:
-    mydb = None #gobal object for database
+    def __init__(self, mydb):
+        while (True): 
+            choice = viewer.homeView() # call main menu
+            if (choice == 1):
+                print('member')
+            elif (choice == 2):
+                self.bookHandler(mydb)
+            elif (choice == 3):
+                print('loan')
+            elif (choice == 4):
+                print('exit')
+                sys.exit()
+            else:
+                viewer.invalidInput()
 
-    def __init__(self):
-        try: # connecto the database
-            mydb = mysql.connector.connect(
-                host="localhost",
-                user='root',
-                passwd=str(sys.argv[1]),
-                db='Library'
-            )
-        except Exception as e:
-            print(e)
-            sys.exit("Can't connect to database")
-
-        choice = viewer.home() # call main menu
-        print(choice)
+    def bookHandler(selft, mydb):
+        print('work pls')
 
 #validate user input
 if len(sys.argv) < 1:
-    print('## ERROR!! python3 library.py [password]')
+    print('[+] ERROR: USECASE python3 library.py [password]')
     sys.exit()
 
-controller = Controller() #create a Controller object
+try: # connecto the database
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user='root',
+        passwd=str(sys.argv[1]),
+        db='Library'
+    )
+except Exception as e:
+    print(e)
+    sys.exit("Can't connect to database")
+
+controller = Controller(mydb) #create a Controller object
