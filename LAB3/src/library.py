@@ -3,7 +3,13 @@ import mysql.connector
 import view as viewer #import view
 
 class Controller:
-    def __init__(self, cursor):
+    def __init__(self, mydb):
+        cursor = mydb.cursor()
+        # fixing utf problem
+        cursor.execute("SET NAMES utf8mb4")
+        cursor.execute("SET CHARACTER SET utf8mb4")
+        cursor.execute("SET character_set_connection=utf8mb4")
+
         while (True): 
             choice = viewer.homeView() # call main menu
             if (choice == 1):
@@ -17,6 +23,7 @@ class Controller:
                 sys.exit()
             else:
                 viewer.invalidInput()
+            mydb.commit() # commit changes in databes
 
     def bookHandler(self, cursor):
         choice = viewer.bookView()
@@ -37,15 +44,18 @@ class Controller:
         if (op == 'book'): # add book
             print('save book to database')
             print(item)
-            # do some sql here
+            mySql_insert_query = 'INSERT IGNORE INTO Book (name, author, edition) VALUES (%s, %s, %s)'
+            # note: book = (name, author, edit, bType) 
+            val = (item[0], item[1], item[2])
+            cursor.execute(mySql_insert_query, val)
+            
+            ## add book type here
         elif( op == 'member'):
             print('save member to database')
             # do some sql here
         else:
             print('save loan details')
             # do some sql here
-
-
 
 """
 MAIN
@@ -66,10 +76,5 @@ except Exception as e:
     print(e)
     sys.exit("Can't connect to database")
 
-cursor = mydb.cursor()
-# fixing utf problem
-cursor.execute("SET NAMES utf8mb4")
-cursor.execute("SET CHARACTER SET utf8mb4")
-cursor.execute("SET character_set_connection=utf8mb4")
 
-controller = Controller(cursor) #create a Controller object
+controller = Controller(mydb) #create a Controller object
