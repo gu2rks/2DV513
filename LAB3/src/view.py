@@ -12,5 +12,13 @@ def bookView(): # book manu
     print('Press 3: delete book')
     return int(input('# '))
 
+def AddBook():
+    name = input('[+] Name: ')
+    author = input('[+] Author: ')
+    edit = int(input('[+] Edition: '))
+    bType = input('[+] Type: ')
+    book = (name, author, edit, bType)
+    return book
+
 def invalidInput():
     print('[+] ERROR!: Invalid input')

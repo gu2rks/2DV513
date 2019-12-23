@@ -19,7 +19,16 @@ class Controller:
                 viewer.invalidInput()
 
     def bookHandler(selft, mydb):
-        print('work pls')
+        choice = viewer.bookView()
+        if (choice == 1):
+            book = viewer.addBook()
+            print(book)
+        elif (choice == 2):
+            print('edit')
+        elif (choice == 3):
+            print('delete')
+        else:
+            viewer.invalidInput()
 
 #validate user input
 if len(sys.argv) < 1:
