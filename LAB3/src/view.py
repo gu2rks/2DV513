@@ -12,6 +12,11 @@ def bookView(): # book manu
     print('Press 3: delete book')
     return int(input('# '))
 
+def loanView():
+    print('Press 1: add loan detail')
+    print('Press 2: delete loan detail')
+    return int(input('# '))
+
 def addBook(): # add book
     name = input('[+] Name: ')
     author = input('[+] Author: ')

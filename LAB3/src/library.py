@@ -17,13 +17,22 @@ class Controller:
             elif (choice == 2):
                 self.bookHandler(cursor)
             elif (choice == 3):
-                print('loan')
+                self.loanHandler(cursor)
             elif (choice == 4):
                 print('exit')
                 sys.exit()
             else:
                 viewer.invalidInput()
             mydb.commit() # commit changes in databes
+
+    def loanHandler(self, cursor):
+        choice = viewer.loanView()
+        if (choice == 1):
+            print('user want to add new loan detail')
+        elif (choice == 2):
+            print('user want to delte new loan detail')
+        else:
+            viewer.invalidInput()
 
     def bookHandler(self, cursor):
         choice = viewer.bookView()
@@ -38,7 +47,8 @@ class Controller:
             viewer.invalidInput()
 
     """
-    @item = book or member
+    @op = opration code (book | member | loan)
+    @item = item that need to be add in database (tuples)
     """
     def insertToDatabase(self, cursor, op ,item):
         if (op == 'book'): # add book
@@ -48,7 +58,7 @@ class Controller:
             # note: book = (name, author, edit, bType) 
             val = (item[0], item[1], item[2])
             cursor.execute(mySql_insert_query, val)
-            
+
             ## add book type here
         elif( op == 'member'):
             print('save member to database')
@@ -77,4 +87,4 @@ except Exception as e:
     sys.exit("Can't connect to database")
 
 
-controller = Controller(mydb) #create a Controller object
+controller = Controller(mydb) #create a Controller
