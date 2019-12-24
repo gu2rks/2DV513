@@ -23,7 +23,7 @@ class Controller:
                 sys.exit()
             else:
                 viewer.invalidInput()
-            mydb.commit() # commit changes in databes
+            mydb.commit() # commit changes in database
 
     def loanHandler(self, cursor):
         choice = viewer.loanView()
@@ -58,8 +58,13 @@ class Controller:
             # note: book = (name, author, edit, bType) 
             val = (item[0], item[1], item[2])
             cursor.execute(mySql_insert_query, val)
-
+            
             ## add book type here
+            bookid = cursor.lastrowid # get the id of just added book
+            mySql_insert_query = 'INSERT IGNORE INTO BookType (type, bookId) VALUES (%s, %s)'
+            val = (item[3], bookid)
+            cursor.execute(mySql_insert_query, val)
+
         elif( op == 'member'):
             print('save member to database')
             # do some sql here
