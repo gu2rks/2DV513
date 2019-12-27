@@ -25,6 +25,7 @@ class Controller:
                 viewer.invalidInput()
             mydb.commit() # commit changes in database
 
+    
     def loanHandler(self, cursor):
         choice = viewer.loanView()
         if (choice == 1):
@@ -52,9 +53,10 @@ class Controller:
             member = viewer.addMember()
             self.insertToDatabase(cursor, 'member', member)
         elif(choice == 2):
-            print('edit mem')
+            member = viewer.deleteMember()
+            self.deleteFromDatabase(cursor, 'member', member )
         elif(choice == 3):
-            print('delete mem')
+            print('edit mem')
         else: 
             viewer.invalidInput()
 
@@ -90,7 +92,15 @@ class Controller:
             print('save loan details')
             # do some sql here
 
-"""
+    def deleteFromDatabase(self, cursor, op ,memTodelete):
+        if(op == 'member'):
+            print('Delete from ddatabase')
+            memTodelete = int(input('[+] persNum: ')) 
+            mySql_delete_query = "delete from Member where personalNum = '%s' " 
+            cursor.execute(mySql_delete_query, (memTodelete,)) 
+        else:
+             print('book')
+""" 
 MAIN
 """
 #validate user input

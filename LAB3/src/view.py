@@ -14,8 +14,8 @@ def bookView(): # book manu
 
 def memberView(): #member menu
     print('press 1: add member')
-    print('press 2: edit member')
-    print('press 3: delete member')
+    print('press 2: delete member')
+    print('press 3: edit member')
     return int(input('# '))
 
 def loanView():
@@ -39,6 +39,10 @@ def addMember(): # add member
     persNum = int(input('[+] persNum: '))
     member = (firstName, lastName, gender, address, persNum)
     return member
+
+def deleteMember(): # delet member
+    memTodelete = int(input('[+] persNum: '))
+    return memTodelete
 
 def invalidInput():
     print('[+] ERROR!: Invalid input')
