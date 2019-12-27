@@ -51,7 +51,7 @@ class Controller:
         choice = viewer.memberView()
         if(choice == 1):
             member = viewer.addMember()
-            self.insertToDatabase(cursor, 'member', member)
+            self.insertToDatabase(cursor, "member", member)
         elif(choice == 2):
             member = viewer.deleteMember()
             self.deleteFromDatabase(cursor, 'member', member)
@@ -82,11 +82,11 @@ class Controller:
         elif( op == 'member'):
             print('save member to database')
             # do some sql here
-            print(item)
             mySql_insert_query = 'INSERT IGNORE INTO Member (firstName, lastName, gender, address, personalNum) VALUES (%s, %s, %s, %s, %s)'
             # note: member = (firstName, lastName, gender, address, personalNumn)
-            value = (item[0], item[1], item[2], item[3], item[4])
-            cursor.execute(mySql_insert_query, value)
+            val = (item[0], item[1], item[2], item[3], item[4])
+            print(val)
+            cursor.execute(mySql_insert_query, val)
 
         else:
             print('save loan details')
@@ -98,7 +98,7 @@ class Controller:
             mySql_delete_query = "delete from Member where personalNum = '%s' " 
             cursor.execute(mySql_delete_query, (memTodelete,)) 
         else:
-             print('book')
+            print('book')
 """ 
 MAIN
 """
