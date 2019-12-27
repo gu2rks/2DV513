@@ -54,7 +54,7 @@ class Controller:
             self.insertToDatabase(cursor, 'member', member)
         elif(choice == 2):
             member = viewer.deleteMember()
-            self.deleteFromDatabase(cursor, 'member', member )
+            self.deleteFromDatabase(cursor, 'member', member)
         elif(choice == 3):
             print('edit mem')
         else: 
@@ -92,10 +92,9 @@ class Controller:
             print('save loan details')
             # do some sql here
 
-    def deleteFromDatabase(self, cursor, op ,memTodelete):
+    def deleteFromDatabase(self, cursor, op, memTodelete ):
         if(op == 'member'):
             print('Delete from ddatabase')
-            memTodelete = int(input('[+] persNum: ')) 
             mySql_delete_query = "delete from Member where personalNum = '%s' " 
             cursor.execute(mySql_delete_query, (memTodelete,)) 
         else:
