@@ -1,2 +1,6 @@
 .DS_Store
 .code-workspace
+
+.vscode/.ropeproject/config.py
+
+/Users/kurohat/Github/2DV513/LAB3/src/__pycache__/view.cpython-37.pyc
