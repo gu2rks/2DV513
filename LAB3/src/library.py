@@ -13,7 +13,7 @@ class Controller:
         while (True): 
             choice = viewer.homeView() # call main menu
             if (choice == 1):
-                print('member')
+                self.memberHandler(cursor)
             elif (choice == 2):
                 self.bookHandler(cursor)
             elif (choice == 3):
@@ -45,6 +45,18 @@ class Controller:
             print('delete')
         else:
             viewer.invalidInput()
+    
+    def memberHandler(self, cursor):
+        choice = viewer.memberView()
+        if(choice == 1):
+            member = viewer.addMember()
+            self.insertToDatabase(cursor, 'member', member)
+        elif(choice == 2):
+            print('edit mem')
+        elif(choice == 3):
+            print('delete mem')
+        else: 
+            viewer.invalidInput()
 
     """
     @op = opration code (book | member | loan)
@@ -68,6 +80,12 @@ class Controller:
         elif( op == 'member'):
             print('save member to database')
             # do some sql here
+            print(item)
+            mySql_insert_query = 'INSERT IGNORE INTO Member (firstName, lastName, gender, address, personalNum) VALUES (%s, %s, %s, %s, %s)'
+            # note: member = (firstName, lastName, gender, address, personalNumn)
+            value = (item[0], item[1], item[2], item[3], item[4])
+            cursor.execute(mySql_insert_query, value)
+
         else:
             print('save loan details')
             # do some sql here

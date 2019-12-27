@@ -1,6 +1,6 @@
 def homeView(): # main menu/home page
     print('')
-    print('Press 1: menage member')
+    print('Press 1: manage member')
     print('Press 2: manage book')
     print('Press 3: manage loan')
     print('Press 4: exit')
@@ -10,6 +10,12 @@ def bookView(): # book manu
     print('Press 1: add book')
     print('Press 2: edit book')
     print('Press 3: delete book')
+    return int(input('# '))
+
+def memberView(): #member menu
+    print('press 1: add member')
+    print('press 2: edit member')
+    print('press 3: delete member')
     return int(input('# '))
 
 def loanView():
@@ -24,6 +30,15 @@ def addBook(): # add book
     bType = input('[+] Type: ')
     book = (name, author, edit, bType) # save as tuple
     return book
+
+def addMember(): # add member
+    firstName = input('[+] firstName: ')
+    lastName = input('[+] lastName: ')
+    gender = input('[+] gender: ')
+    address = input('[+] adress: ')
+    persNum = int(input('[+] persNum: '))
+    member = (firstName, lastName, gender, address, persNum)
+    return member
 
 def invalidInput():
     print('[+] ERROR!: Invalid input')
