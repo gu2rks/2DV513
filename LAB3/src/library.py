@@ -30,10 +30,28 @@ class Controller:
         choice = viewer.loanView()
         if (choice == 1):
             print('user want to add new loan detail')
+            personNum = int(input('Enter the member personal number:'))
+            memberID = self.findPersonNumber(cursor, personNum) # get member id by member.personNumber
+            if (len(memberID) != 0):
+                self.findbook(cursor)
+            else:
+                print('[+] ERROR: Member is not exist in the database')
+                pass    
         elif (choice == 2):
-            print('user want to delte new loan detail')
+            print('user want to delete new loan detail')
         else:
             viewer.invalidInput()
+
+
+    def findbook(self, cursor):
+        print('find book')
+
+    def findPersonNumber(self, cursor, personNum):
+        mySql_select_query = "SELECT id FROM `Member` WHERE personalNum = '%s' "
+        cursor.execute(mySql_select_query, (personNum,))
+        records = cursor.fetchall()
+        return records
+
 
     def bookHandler(self, cursor):
         choice = viewer.bookView()
@@ -41,9 +59,9 @@ class Controller:
             book = viewer.addBook() # book as tuple
             self.insertToDatabase(cursor, "book", book)
         elif (choice == 2):
-            print('edit')
-        elif (choice == 3):
             print('delete')
+        elif (choice == 3):
+            print('edit')
         else:
             viewer.invalidInput()
     
@@ -94,8 +112,9 @@ class Controller:
 
     def deleteFromDatabase(self, cursor, op, memTodelete ):
         if(op == 'member'):
+            # try to select first, if it do not exist then prompt an alert. if exist then -> delete it
             print('Delete from ddatabase')
-            mySql_delete_query = "delete from Member where personalNum = '%s' " 
+            mySql_delete_query = "delete from `Member` where personalNum = '%s' " 
             cursor.execute(mySql_delete_query, (memTodelete,)) 
         else:
             print('book')
