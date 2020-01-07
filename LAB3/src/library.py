@@ -30,10 +30,13 @@ class Controller:
         choice = viewer.loanView()
         if (choice == 1):
             print('user want to add new loan detail')
-            personNum = int(input('Enter the member personal number:'))
-            memberID = self.findPersonNumber(cursor, personNum) # get member id by member.personNumber
+            personNum = int(input('Enter the member\'s personal number: '))
+            memberID = self.getMemberId(cursor, personNum) # get member id by member.personNumber
             if (len(memberID) != 0):
-                self.findbook(cursor)
+                bookName = input('Enter the book\'s name: ')
+                bookEdit = int(input('Enter the book\'s edition: '))
+                bookID = self.getBookId(cursor, bookName, bookEdit)
+                print(bookID)
             else:
                 print('[+] ERROR: Member is not exist in the database')
                 pass    
@@ -43,10 +46,14 @@ class Controller:
             viewer.invalidInput()
 
 
-    def findbook(self, cursor):
-        print('find book')
+    def getBookId(self, cursor, name, edition):
+        mySql_select_query = "SELECT id FROM `Book` WHERE name = %s AND edition = %s"
+        cursor.execute(mySql_select_query, (name, edition))
+        records = cursor.fetchall()
+        return records
 
-    def findPersonNumber(self, cursor, personNum):
+
+    def getMemberId(self, cursor, personNum):
         mySql_select_query = "SELECT id FROM `Member` WHERE personalNum = '%s' "
         cursor.execute(mySql_select_query, (personNum,))
         records = cursor.fetchall()
