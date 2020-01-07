@@ -33,23 +33,25 @@ class Controller:
         if (choice == 1):
             print('Please enter following informations to make a new loan')
             personNum = int(input('Enter the member\'s personal number: '))
-            memberID = self.getMemberId(cursor, personNum) # get member id by member.personNumber
-            if not self.isEmpty('member' ,memberID): # check is member exist
+            members = self.getMemberId(cursor, personNum) # get member id by member.personNumber
+            if not self.isEmpty('member' ,members): # check is member exist
+                memberId = members[0]
                 bookName = input('Enter the book\'s name: ')
                 bookEdit = int(input('Enter the book\'s edition: '))
-                bookID = self.getBookId(cursor, bookName, bookEdit)
-                if not self.isEmpty('book', bookID): # check if book exist
+                books = self.getBookId(cursor, bookName, bookEdit)
+                if not self.isEmpty('book', books): # check if book exist
+                    bookId = books[0] #get the first tuple
                     current = time.time()  # current time
                     threeWeek = 1814400 # three time
                     expired = current + threeWeek 
-                    expired = datetime.fromtimestamp(expired)
-                    current = datetime.fromtimestamp(current)
+                    expired = datetime.fromtimestamp(int(expired))
+                    current = datetime.fromtimestamp(int(current))
                     print('date: %s Expried date: %s' %(current, expired))
 
                     # now insert loan detail
-                    # mySql_insert_query = 'INSERT IGNORE INTO `LoanDetails` (date, expireDate, bkID, memberId) VALUES (%s, %s, %s, %s)'
-                    
-
+                    mySql_insert_query = 'INSERT IGNORE INTO `LoanDetails` (date, expireDate, bkID, memberId) VALUES (%s, %s, %s, %s)'
+                    val = (current, expired, bookId[0], memberId[0])
+                    cursor.execute(mySql_insert_query, val)
             else:
                 pass    
         elif (choice == 2):
@@ -66,6 +68,8 @@ class Controller:
                 print('[+] ERROR: Book is not exist in the database')
             return True
         else:
+            bla = item[0]
+            print(bla[0])
             return False
         
 
