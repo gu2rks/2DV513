@@ -1,6 +1,8 @@
 import sys
 import mysql.connector
 import view as viewer #import view
+from datetime import datetime
+import time
 
 class Controller:
     def __init__(self, mydb):
@@ -29,22 +31,43 @@ class Controller:
     def loanHandler(self, cursor):
         choice = viewer.loanView()
         if (choice == 1):
-            print('user want to add new loan detail')
+            print('Please enter following informations to make a new loan')
             personNum = int(input('Enter the member\'s personal number: '))
             memberID = self.getMemberId(cursor, personNum) # get member id by member.personNumber
-            if (len(memberID) != 0):
+            if not self.isEmpty('member' ,memberID): # check is member exist
                 bookName = input('Enter the book\'s name: ')
                 bookEdit = int(input('Enter the book\'s edition: '))
                 bookID = self.getBookId(cursor, bookName, bookEdit)
-                print(bookID)
+                if not self.isEmpty('book', bookID): # check if book exist
+                    current = time.time()  # current time
+                    threeWeek = 1814400 # three time
+                    expired = current + threeWeek 
+                    expired = datetime.fromtimestamp(expired)
+                    current = datetime.fromtimestamp(current)
+                    print('date: %s Expried date: %s' %(current, expired))
+
+                    # now insert loan detail
+                    # mySql_insert_query = 'INSERT IGNORE INTO `LoanDetails` (date, expireDate, bkID, memberId) VALUES (%s, %s, %s, %s)'
+                    
+
             else:
-                print('[+] ERROR: Member is not exist in the database')
                 pass    
         elif (choice == 2):
             print('user want to delete new loan detail')
         else:
             viewer.invalidInput()
 
+    def isEmpty(self, op, item):
+        output = ''
+        if (len(item) == 0): # the tuple is empty
+            if (op == 'member'):
+                print('[+] ERROR: Member is not exist in the database')
+            elif (op == 'book'):
+                print('[+] ERROR: Book is not exist in the database')
+            return True
+        else:
+            return False
+        
 
     def getBookId(self, cursor, name, edition):
         mySql_select_query = "SELECT id FROM `Book` WHERE name = %s AND edition = %s"
