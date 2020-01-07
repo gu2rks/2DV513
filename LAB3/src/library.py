@@ -82,9 +82,9 @@ class Controller:
         elif( op == 'member'):
             print('save member to database')
             # do some sql here
-            mySql_insert_query = 'INSERT IGNORE INTO Member (firstName, lastName, gender, address, personalNum) VALUES (%s, %s, %s, %s, %s)'
+            mySql_insert_query = "INSERT IGNORE INTO `Member` (firstName, lastName, gender, address, personalNum) VALUES (%s, %s, %s, %s, %s)"
             # note: member = (firstName, lastName, gender, address, personalNumn)
-            val = (item[0], item[1], item[2], item[3], item[4])
+            val = (item[0], item[1], item[2], item[3], int(item[4]))
             print(val)
             cursor.execute(mySql_insert_query, val)
 
