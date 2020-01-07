@@ -1,6 +1,8 @@
 import sys
 import mysql.connector
 import view as viewer #import view
+from datetime import datetime
+import time
 
 class Controller:
     def __init__(self, mydb):
@@ -29,11 +31,61 @@ class Controller:
     def loanHandler(self, cursor):
         choice = viewer.loanView()
         if (choice == 1):
-            print('user want to add new loan detail')
+            print('Please enter following informations to make a new loan')
+            personNum = int(input('Enter the member\'s personal number: '))
+            members = self.getMemberId(cursor, personNum) # get member id by member.personNumber
+            if not self.isEmpty('member' ,members): # check is member exist
+                memberId = members[0]
+                bookName = input('Enter the book\'s name: ')
+                bookEdit = int(input('Enter the book\'s edition: '))
+                books = self.getBookId(cursor, bookName, bookEdit)
+                if not self.isEmpty('book', books): # check if book exist
+                    bookId = books[0] #get the first tuple
+                    current = time.time()  # current time
+                    threeWeek = 1814400 # three time
+                    expired = current + threeWeek 
+                    expired = datetime.fromtimestamp(int(expired))
+                    current = datetime.fromtimestamp(int(current))
+                    print('date: %s Expried date: %s' %(current, expired))
+
+                    # now insert loan detail
+                    mySql_insert_query = 'INSERT IGNORE INTO `LoanDetails` (date, expireDate, bkID, memberId) VALUES (%s, %s, %s, %s)'
+                    val = (current, expired, bookId[0], memberId[0])
+                    cursor.execute(mySql_insert_query, val)
+            else:
+                pass    
         elif (choice == 2):
-            print('user want to delte new loan detail')
+            print('user want to delete new loan detail')
         else:
             viewer.invalidInput()
+
+    def isEmpty(self, op, item):
+        output = ''
+        if (len(item) == 0): # the tuple is empty
+            if (op == 'member'):
+                print('[+] ERROR: Member is not exist in the database')
+            elif (op == 'book'):
+                print('[+] ERROR: Book is not exist in the database')
+            return True
+        else:
+            bla = item[0]
+            print(bla[0])
+            return False
+        
+
+    def getBookId(self, cursor, name, edition):
+        mySql_select_query = "SELECT id FROM `Book` WHERE name = %s AND edition = %s"
+        cursor.execute(mySql_select_query, (name, edition))
+        records = cursor.fetchall()
+        return records
+
+
+    def getMemberId(self, cursor, personNum):
+        mySql_select_query = "SELECT id FROM `Member` WHERE personalNum = '%s' "
+        cursor.execute(mySql_select_query, (personNum,))
+        records = cursor.fetchall()
+        return records
+
 
     def bookHandler(self, cursor):
         choice = viewer.bookView()
@@ -41,9 +93,9 @@ class Controller:
             book = viewer.addBook() # book as tuple
             self.insertToDatabase(cursor, "book", book)
         elif (choice == 2):
-            print('edit')
-        elif (choice == 3):
             print('delete')
+        elif (choice == 3):
+            print('edit')
         else:
             viewer.invalidInput()
     
@@ -94,8 +146,9 @@ class Controller:
 
     def deleteFromDatabase(self, cursor, op, memTodelete ):
         if(op == 'member'):
+            # try to select first, if it do not exist then prompt an alert. if exist then -> delete it
             print('Delete from ddatabase')
-            mySql_delete_query = "delete from Member where personalNum = '%s' " 
+            mySql_delete_query = "delete from `Member` where personalNum = '%s' " 
             cursor.execute(mySql_delete_query, (memTodelete,)) 
         else:
             print('book')
