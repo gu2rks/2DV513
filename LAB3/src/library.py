@@ -32,13 +32,13 @@ class Controller:
         choice = viewer.loanView()
         if (choice == 1):
             print('Please enter following informations to make a new loan (borrow book)')
-            personNum = int(input('Enter the member\'s personal number: '))
+            personNum = viewer.getPersonNum()
             members = self.getMemberId(cursor, personNum) # get member id by member.personNumber
             if not self.isEmpty('member' ,members): # check is member exist
                 memberId = members[0]
-                bookName = input('Enter the book\'s name: ')
-                bookEdit = int(input('Enter the book\'s edition: '))
-                books = self.getBookId(cursor, bookName, bookEdit)
+                bookKey = viewer.getBookID()
+                # book = (bookName, bookEdition)
+                books = self.getBookId(cursor, bookKey[0], bookKey[1])
                 if not self.isEmpty('book', books): # check if book exist
                     bookId = books[0] #get the first tuple
                     current = time.time()  # current time in unix time
@@ -53,13 +53,12 @@ class Controller:
                 pass    
         elif (choice == 2):
             print('Please enter following information to return the book')
-            personNum = int(input('Enter the member\'s personal number: '))
+            personNum = viewer.getPersonNum()
             members = self.getMemberId(cursor, personNum) # get member id by member.personNumber
             if not self.isEmpty('member' ,members): # check is member exist
                 memberId = members[0]
-                bookName = input('Enter the book\'s name: ')
-                bookEdit = int(input('Enter the book\'s edition: '))
-                books = self.getBookId(cursor, bookName, bookEdit)
+                bookKey = viewer.getBookID()
+                books = self.getBookId(cursor, bookKey[0], bookKey[1])
                 if not self.isEmpty('book', books): # check if book exist
                     bookId = books[0] #get the first tuple
                     # check if the loanDetails is exist
@@ -84,7 +83,6 @@ class Controller:
         else:
             return False
         
-
     def getBookId(self, cursor, name, edition):
         mySql_select_query = "SELECT id FROM `Book` WHERE name = %s AND edition = %s"
         cursor.execute(mySql_select_query, (name, edition))
@@ -115,7 +113,7 @@ class Controller:
             member = viewer.addMember()
             self.insertToDatabase(cursor, "member", member)
         elif(choice == 2):
-            member = viewer.deleteMember()
+            member = viewer.getPersonNum()
             self.deleteFromDatabase(cursor, 'member', member)
         elif(choice == 3):
             print('edit mem')
@@ -128,13 +126,11 @@ class Controller:
     """
     def insertToDatabase(self, cursor, op ,item):
         if( op == 'member'):
-            # do some sql here
             mySql_insert_query = "INSERT IGNORE INTO `Member` (firstName, lastName, gender, address, personalNum) VALUES (%s, %s, %s, %s, %s)"
             # note: member = (firstName, lastName, gender, address, personalNumn)
             val = (item[0], item[1], item[2], item[3], int(item[4]))
             cursor.execute(mySql_insert_query, val)
-            print('[+] Alert: The book has been added into the database')
-
+            print('[+] Alert: The MEMBER has been added into the database')
 
         elif (op == 'book'): # add book
             mySql_insert_query = 'INSERT IGNORE INTO Book (name, author, edition) VALUES (%s, %s, %s)'
@@ -147,12 +143,12 @@ class Controller:
             mySql_insert_query = 'INSERT IGNORE INTO BookType (type, bookId) VALUES (%s, %s)'
             val = (item[3], bookid)
             cursor.execute(mySql_insert_query, val)
-            print('[+] Alert: The book has been added into the database')
+            print('[+] Alert: The BOOK has been added into the database')
 
         else:
             mySql_insert_query = 'INSERT IGNORE INTO `LoanDetails` (date, expireDate, bkID, memberId) VALUES (%s, %s, %s, %s)'
             cursor.execute(mySql_insert_query, (item[0], item[1], item[2], item[3]))
-            print('[+] Alert: The loan detail has been added into the database')
+            print('[+] Alert: The LOAN detail has been added into the database')
 
 
     def deleteFromDatabase(self, cursor, op, memTodelete ):
@@ -162,7 +158,7 @@ class Controller:
             cursor.execute(mySql_delete_query, (memTodelete,)) 
             print('[+] Alert: The member has been deleted from database')
         elif(op == 'book'):
-            print('book')
+            print('delete book')
         else:
             mySql_delete_query = "delete from `LoanDetails` WHERE bkID = %s AND memberId = %s"
             cursor.execute(mySql_delete_query, (memTodelete[0], memTodelete[1])) # memTodelete[0] = bookId [1] = memberId
