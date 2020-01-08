@@ -113,8 +113,8 @@ class Controller:
             member = viewer.addMember()
             self.insertToDatabase(cursor, "member", member)
         elif(choice == 2):
-            member = viewer.getPersonNum()
-            self.deleteFromDatabase(cursor, 'member', member)
+            personNum = viewer.getPersonNum()
+            self.deleteFromDatabase(cursor, 'member', personNum)
         elif(choice == 3):
             print('edit mem')
         else: 
@@ -151,17 +151,21 @@ class Controller:
             print('[+] Alert: The LOAN detail has been added into the database')
 
 
-    def deleteFromDatabase(self, cursor, op, memTodelete ):
+    def deleteFromDatabase(self, cursor, op, keyTodelete ):
         if(op == 'member'):
             # try to select first, if it do not exist then prompt an alert. if exist then -> delete it
-            mySql_delete_query = "delete from `Member` where personalNum = '%s' " 
-            cursor.execute(mySql_delete_query, (memTodelete,)) 
-            print('[+] Alert: The member has been deleted from database')
+            members = self.getMemberId(cursor, keyTodelete) # get member id by member.personNumber
+            if not self.isEmpty('member' ,members): # check is member exist
+                memberId = members[0]
+                mySql_delete_query = "delete from `Member` where personalNum = '%s' " 
+                cursor.execute(mySql_delete_query, (keyTodelete,)) 
+                print('[+] Alert: The member has been deleted from database')
+                
         elif(op == 'book'):
             print('delete book')
         else:
             mySql_delete_query = "delete from `LoanDetails` WHERE bkID = %s AND memberId = %s"
-            cursor.execute(mySql_delete_query, (memTodelete[0], memTodelete[1])) # memTodelete[0] = bookId [1] = memberId
+            cursor.execute(mySql_delete_query, (keyTodelete[0], keyTodelete[1])) # memTodelete[0] = bookId [1] = memberId
             print('[+] Alert: The loan detail has been deleted from database')
 
             
