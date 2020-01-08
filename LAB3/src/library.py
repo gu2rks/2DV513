@@ -47,9 +47,8 @@ class Controller:
                     expired = datetime.fromtimestamp(int(expired))
                     current = datetime.fromtimestamp(int(current))
                     # now insert loan detail
-                    mySql_insert_query = 'INSERT IGNORE INTO `LoanDetails` (date, expireDate, bkID, memberId) VALUES (%s, %s, %s, %s)'
                     val = (current, expired, bookId[0], memberId[0])
-                    cursor.execute(mySql_insert_query, val)
+                    self.insertToDatabase(cursor, 'loan', val)
             else:
                 pass    
         elif (choice == 2):
@@ -68,9 +67,7 @@ class Controller:
                     cursor.execute(mySql_select_query, (bookId[0], memberId[0]))
                     records = cursor.fetchall()
                     if not self.isEmpty('loan', records):
-                        self.deleteFromDatabase(cursor, 'loan', (bookId[0], memberId[0]))
-            else:
-                print('[+] ERROR: there is data about this specific loan in the database')
+                        self.deleteFromDatabase(cursor, 'loan', (bookId[0], memberId[0]))                    
         else:
             viewer.invalidInput()
                 
@@ -82,7 +79,7 @@ class Controller:
             elif (op == 'book'):
                 print('[+] ERROR: Book is not exist in the database')
             elif (op == 'loan'):
-                print('[+] ERROR: Loan detail is not exist in the database')
+                print('[+] ERROR: there is NO data about this specific loan in the database')
             return True
         else:
             return False
@@ -130,9 +127,16 @@ class Controller:
     @item = item that need to be add in database (tuples)
     """
     def insertToDatabase(self, cursor, op ,item):
-        if (op == 'book'): # add book
-            print('save book to database')
-            print(item)
+        if( op == 'member'):
+            # do some sql here
+            mySql_insert_query = "INSERT IGNORE INTO `Member` (firstName, lastName, gender, address, personalNum) VALUES (%s, %s, %s, %s, %s)"
+            # note: member = (firstName, lastName, gender, address, personalNumn)
+            val = (item[0], item[1], item[2], item[3], int(item[4]))
+            cursor.execute(mySql_insert_query, val)
+            print('[+] Alert: The book has been added into the database')
+
+
+        elif (op == 'book'): # add book
             mySql_insert_query = 'INSERT IGNORE INTO Book (name, author, edition) VALUES (%s, %s, %s)'
             # note: book = (name, author, edit, bType) 
             val = (item[0], item[1], item[2])
@@ -143,19 +147,13 @@ class Controller:
             mySql_insert_query = 'INSERT IGNORE INTO BookType (type, bookId) VALUES (%s, %s)'
             val = (item[3], bookid)
             cursor.execute(mySql_insert_query, val)
-
-        elif( op == 'member'):
-            print('save member to database')
-            # do some sql here
-            mySql_insert_query = "INSERT IGNORE INTO `Member` (firstName, lastName, gender, address, personalNum) VALUES (%s, %s, %s, %s, %s)"
-            # note: member = (firstName, lastName, gender, address, personalNumn)
-            val = (item[0], item[1], item[2], item[3], int(item[4]))
-            print(val)
-            cursor.execute(mySql_insert_query, val)
+            print('[+] Alert: The book has been added into the database')
 
         else:
-            print('save loan details')
-            # do some sql here
+            mySql_insert_query = 'INSERT IGNORE INTO `LoanDetails` (date, expireDate, bkID, memberId) VALUES (%s, %s, %s, %s)'
+            cursor.execute(mySql_insert_query, (item[0], item[1], item[2], item[3]))
+            print('[+] Alert: The loan detail has been added into the database')
+
 
     def deleteFromDatabase(self, cursor, op, memTodelete ):
         if(op == 'member'):
