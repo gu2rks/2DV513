@@ -40,9 +40,14 @@ def addMember(): # add member
     member = (firstName, lastName, gender, address, persNum)
     return member
 
-def deleteMember(): # delet member
-    memTodelete = int(input('[+] persNum: '))
+def getPersonNum(): # delet member
+    memTodelete = int(input('Enter the member\'s personal number: '))
     return memTodelete
+
+def getBookID():
+    bookName = input('Enter the book\'s name: ')
+    bookEdit = int(input('Enter the book\'s edition: '))
+    return (bookName,bookEdit)
 
 def invalidInput():
     print('[+] ERROR!: Invalid input')
