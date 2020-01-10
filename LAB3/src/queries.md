@@ -30,3 +30,28 @@ From LoanDetails
 JOIN Member ON LoanDetails.memberId = Member.id
 WHERE personalNum = '34234545';
 ```
+
+get member info who borrowed book that's about to expire
+``` sql
+Use Library;
+Select *
+From Member
+JOIN LoanDetails on Member.memID = LoanDetails.member_id
+where expireDate in (
+	select expireDate
+    from LoanDetails
+	where expireDate = '2020-01-31'
+    )
+```
+
+``` sql
+USE Library;
+Select count(memID)
+FROM Member
+JOIN LoanDetails on Member.memID = LoanDetails.member_id
+Where book_id  in (
+	select book_id
+    from LoanDetails
+    where book_id = 2
+)
+```
