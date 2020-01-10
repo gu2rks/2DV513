@@ -83,7 +83,6 @@ class Controller:
             print('[+] Error: OUT OF STOCK\nThis book is not in the library at the moment')
         else: 
             if (op == 'borrow'):
-<<<<<<< HEAD
                 # borrow book -> decrease the stock
                 mySql_update_query = "UPDATE Stock SET amount = amount - 1 where Stock.book_id = %s;"
                 cursor.execute(mySql_update_query, (bookId[0], ))
@@ -92,17 +91,6 @@ class Controller:
                 mySql_update_query = "UPDATE Stock SET amount = amount + 1 where Stock.book_id = %s;"
                 cursor.execute(mySql_update_query, (bookId, )) 
             return True
-=======
-                mySql_update_query = "UPDATE Stock SET amount = amount - 1 where Stock.book_id = %s;"
-                cursor.execute(mySql_update_query, (bookId[0], ))
-            else:
-                mySql_update_query = "UPDATE Stock SET amount = amount + 1 where Stock.book_id = %s;"
-                cursor.execute(mySql_update_query, (bookId, ))
-            return True
-
-
-
->>>>>>> master
 
     def isEmpty(self, op, item):
         output = ''

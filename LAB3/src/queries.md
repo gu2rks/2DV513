@@ -12,6 +12,8 @@ CREATE VIEW bookStock As -- create view
 select * 
 from Book
 join Stock on Book.bkID = Stock.book_id;
+
+DROP VIEW bookStock
 ```
 
 get amount of bookStock
