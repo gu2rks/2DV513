@@ -25,12 +25,12 @@ DROP TABLE IF EXISTS `Book`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Book` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `bkID` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
   `author` varchar(45) NOT NULL,
-  `edition` varchar(45) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
+  `edition` int(11) NOT NULL,
+  `type` varchar(45) NOT NULL,
+  PRIMARY KEY (`bkID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -44,32 +44,6 @@ LOCK TABLES `Book` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `BookType`
---
-
-DROP TABLE IF EXISTS `BookType`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `BookType` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` varchar(45) NOT NULL,
-  `bookId` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `bookId` (`bookId`),
-  CONSTRAINT `bookId` FOREIGN KEY (`bookId`) REFERENCES `book` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `BookType`
---
-
-LOCK TABLES `BookType` WRITE;
-/*!40000 ALTER TABLE `BookType` DISABLE KEYS */;
-/*!40000 ALTER TABLE `BookType` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `LoanDetails`
 --
 
@@ -77,14 +51,14 @@ DROP TABLE IF EXISTS `LoanDetails`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `LoanDetails` (
+  `book_id` int(11) NOT NULL,
+  `member_id` int(11) NOT NULL,
   `date` date NOT NULL,
   `expireDate` date NOT NULL,
-  `bkID` int(11) NOT NULL,
-  `memberId` int(11) NOT NULL,
-  KEY `bkID` (`bkID`),
-  KEY `memberId` (`memberId`),
-  CONSTRAINT `bkID` FOREIGN KEY (`bkID`) REFERENCES `book` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `memberId` FOREIGN KEY (`memberId`) REFERENCES `member` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  KEY `member_id` (`member_id`),
+  KEY `book_id` (`book_id`),
+  CONSTRAINT `book_id` FOREIGN KEY (`book_id`) REFERENCES `book` (`bkID`),
+  CONSTRAINT `member_id` FOREIGN KEY (`member_id`) REFERENCES `member` (`memID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -105,15 +79,15 @@ DROP TABLE IF EXISTS `Member`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Member` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `gender` varchar(45) NOT NULL,
+  `memID` int(11) NOT NULL AUTO_INCREMENT,
   `firstName` varchar(45) NOT NULL,
   `lastName` varchar(45) NOT NULL,
+  `gender` varchar(45) NOT NULL,
   `address` varchar(45) NOT NULL,
   `personalNum` varchar(45) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`memID`),
+  UNIQUE KEY `id_UNIQUE` (`memID`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -122,7 +96,34 @@ CREATE TABLE `Member` (
 
 LOCK TABLES `Member` WRITE;
 /*!40000 ALTER TABLE `Member` DISABLE KEYS */;
+INSERT INTO `Member` VALUES (2,'Amata','A','male','agfffg 4','34234545'),(6,'f','j','female','afadfv','124354655'),(7,'fgdfs','gdfgd','female','agsdgg','231425356'),(10,'sfgf','gbwrtb','fafva','afvavav','435636777'),(11,'Ebtisam','Moh','female','bla bla 2','222233334'),(12,'bla','ja','female','fsdffsdg 3','2223344556'),(13,'fj','kk','female','adr 3','12345');
 /*!40000 ALTER TABLE `Member` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Stock`
+--
+
+DROP TABLE IF EXISTS `Stock`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Stock` (
+  `stockID` int(11) NOT NULL AUTO_INCREMENT,
+  `book_id` int(11) NOT NULL,
+  `amount` int(11) NOT NULL,
+  PRIMARY KEY (`stockID`),
+  KEY `Sbook_id` (`book_id`),
+  CONSTRAINT `Sbook_id` FOREIGN KEY (`book_id`) REFERENCES `book` (`bkID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Stock`
+--
+
+LOCK TABLES `Stock` WRITE;
+/*!40000 ALTER TABLE `Stock` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Stock` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -134,4 +135,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-17 23:50:34
+-- Dump completed on 2020-01-10 17:35:43
