@@ -7,15 +7,19 @@ group by BookType.type
 
 Task 4.2 + 4.4 
 ```sql
-USE Library; 
-CREATE VIEW bookInfo As -- create view
-SELECT *
-FROM Book
-JOIN BookType ON  BookType.bookId = Book.id;
+USE Library;
+CREATE VIEW bookStock As -- create view
+select * 
+from Book
+join Stock on Book.bkID = Stock.book_id;
+```
 
-SELECT name, author, edition, type
-from bookInfo;
-DROP view bookInfo;
+get amount of bookStock
+```sql
+USE Library;
+select amount
+from bookStock
+where name = 'the lord of underwear' and edition = '1';
 ```
 
 get borrowed book base on personNum

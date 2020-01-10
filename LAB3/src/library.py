@@ -40,6 +40,7 @@ class Controller:
                 # book = (bookName, bookEdition)
                 books = self.getBookId(cursor, bookKey[0], bookKey[1])
                 if not self.isEmpty('book', books): # check if book exist
+                    # check if the loanDetails is exist
                     bookId = books[0] #get the first tuple
                     current = time.time()  # current time in unix time
                     threeWeek = 1814400 # three time in unix time
@@ -61,15 +62,18 @@ class Controller:
                 books = self.getBookId(cursor, bookKey[0], bookKey[1])
                 if not self.isEmpty('book', books): # check if book exist
                     bookId = books[0] #get the first tuple
-                    # check if the loanDetails is exist
-                    mySql_select_query = "SELECT * FROM `LoanDetails` WHERE bkID = %s AND memberId = %s"
+                    mySql_select_query = "SELECT * FROM `LoanDetails` WHERE book_id = %s AND member_id = %s"
                     cursor.execute(mySql_select_query, (bookId[0], memberId[0]))
                     records = cursor.fetchall()
                     if not self.isEmpty('loan', records):
                         self.deleteFromDatabase(cursor, 'loan', (bookId[0], memberId[0]))                    
         else:
             viewer.invalidInput()
-                
+
+    def stockHandler(self, bookId):
+        mySql_select_query = "select amount from bookStock where"
+
+
     def isEmpty(self, op, item):
         output = ''
         if (len(item) == 0): # the tuple is empty
@@ -126,31 +130,35 @@ class Controller:
     """
     def insertToDatabase(self, cursor, op ,item):
         if( op == 'member'):
-            mySql_insert_query = "INSERT IGNORE INTO `Member` (firstName, lastName, gender, address, personalNum) VALUES (%s, %s, %s, %s, %s)"
             # note: member = (firstName, lastName, gender, address, personalNumn)
+            mySql_insert_query = "INSERT IGNORE INTO `Member` (firstName, lastName, gender, address, personalNum) VALUES (%s, %s, %s, %s, %s)"
             val = (item[0], item[1], item[2], item[3], int(item[4]))
             cursor.execute(mySql_insert_query, val)
             print('[+] Alert: The MEMBER has been added into the database')
 
-        elif (op == 'book'): # add book
-            mySql_insert_query = 'INSERT IGNORE INTO Book (name, author, edition) VALUES (%s, %s, %s)'
+        elif (op == 'book'): 
+            # add book
             # note: book = (name, author, edit, bType) 
-            val = (item[0], item[1], item[2])
+            mySql_insert_query = 'INSERT IGNORE INTO Book (name, author, edition, type) VALUES (%s, %s, %s, %s)'
+            val = (item[0], item[1], item[2], item[3])
             cursor.execute(mySql_insert_query, val)
             
-            ## add book type here
+            ## add stock
             bookid = cursor.lastrowid # get the id of just added book
-            mySql_insert_query = 'INSERT IGNORE INTO BookType (type, bookId) VALUES (%s, %s)'
-            val = (item[3], bookid)
+            mySql_insert_query = 'INSERT IGNORE INTO Stock (amount, book_id) VALUES (%s, %s)'
+            val = (item[4], bookid)
             cursor.execute(mySql_insert_query, val)
-            print('[+] Alert: The BOOK has been added into the database')
+            print('[+] Alert: The stock has been added into the database')
 
         else:
-            mySql_insert_query = 'INSERT IGNORE INTO `LoanDetails` (date, expireDate, bkID, memberId) VALUES (%s, %s, %s, %s)'
+            mySql_insert_query = 'INSERT IGNORE INTO `LoanDetails` (date, expireDate, book_id, member_id) VALUES (%s, %s, %s, %s)'
             cursor.execute(mySql_insert_query, (item[0], item[1], item[2], item[3]))
             print('[+] Alert: The LOAN detail has been added into the database')
 
-
+    """
+    @op = opration code (book | member | loan)
+    @keyTodelete = The key which will be use for searching for the object
+    """
     def deleteFromDatabase(self, cursor, op, keyTodelete ):
         if(op == 'member'):
             # try to select first, if it do not exist then prompt an alert. if exist then -> delete it

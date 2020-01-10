@@ -24,11 +24,13 @@ def loanView():
     return int(input('# '))
 
 def addBook(): # add book
+    print('Please enter following information to add new book into the databse')
     name = input('[+] Name: ')
     author = input('[+] Author: ')
     edit = int(input('[+] Edition: '))
     bType = input('[+] Type: ')
-    book = (name, author, edit, bType) # save as tuple
+    stock = input('[+] Stock:')
+    book = (name, author, edit, bType, int(stock)) # save as tuple
     return book
 
 def addMember(): # add member
