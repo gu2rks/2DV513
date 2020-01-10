@@ -40,17 +40,18 @@ class Controller:
                 # book = (bookName, bookEdition)
                 books = self.getBookId(cursor, bookKey[0], bookKey[1])
                 if not self.isEmpty('book', books): # check if book exist
+                    bookId = books[0]
                     # check if the loanDetails is exist
-                    # self.stockHandler(cursor, books[0])
-                    bookId = books[0] #get the first tuple
-                    current = time.time()  # current time in unix time
-                    threeWeek = 1814400 # three time in unix time
-                    expired = current + threeWeek 
-                    expired = datetime.fromtimestamp(int(expired))
-                    current = datetime.fromtimestamp(int(current))
-                    # now insert loan detail
-                    val = (current, expired, bookId[0], memberId[0])
-                    self.insertToDatabase(cursor, 'loan', val)
+                    if self.stockHandler(cursor, 'borrow' ,booksId):
+                         #get the first tuple
+                        current = time.time()  # current time in unix time
+                        threeWeek = 1814400 # three time in unix time
+                        expired = current + threeWeek 
+                        expired = datetime.fromtimestamp(int(expired))
+                        current = datetime.fromtimestamp(int(current))
+                        # now insert loan detail
+                        val = (current, expired, bookId[0], memberId[0])
+                        self.insertToDatabase(cursor, 'loan', val)
             else:
                 pass    
         elif (choice == 2):
@@ -67,15 +68,28 @@ class Controller:
                     cursor.execute(mySql_select_query, (bookId[0], memberId[0]))
                     records = cursor.fetchall()
                     if not self.isEmpty('loan', records):
+                        self.stockHandler(cursor, 'return', bookId[0])
                         self.deleteFromDatabase(cursor, 'loan', (bookId[0], memberId[0]))                    
         else:
             viewer.invalidInput()
 
-    def stockHandler(self, cursor, bookId):
+    def stockHandler(self, cursor, op, bookId):
         mySql_select_query = "select amount from bookStock where book_id = %s"
-        cursor.execute(mySql_select_query, (bookId[0], ))
-        stock = cursor.fetchone()
-        print(stock[0])
+        cursor.execute(mySql_select_query, (bookId, ))
+        records = cursor.fetchone()
+        stock = int(records[0])
+        if stock == 0: ## no book left in stock
+            return False
+            print('[+] Error: OUT OF STOCK\nThis book is not in the library at the moment')
+        else: 
+            if (op == 'borrow'):
+                mySql_update_query = "UPDATE Stock SET amount = amount - 1 where Stock.book_id = %s;"
+                cursor.execute(mySql_update_query, (bookId[0], ))
+            else:
+                mySql_update_query = "UPDATE Stock SET amount = amount + 1 where Stock.book_id = %s;"
+                cursor.execute(mySql_update_query, (bookId, ))
+            return True
+
 
 
 
@@ -139,7 +153,7 @@ class Controller:
             mySql_insert_query = "INSERT IGNORE INTO `Member` (firstName, lastName, gender, address, personalNum) VALUES (%s, %s, %s, %s, %s)"
             val = (item[0], item[1], item[2], item[3], int(item[4]))
             cursor.execute(mySql_insert_query, val)
-            print('[+] Alert: The MEMBER has been added into the database')
+            print('[+] SUCESFUL: The MEMBER has been added into the database')
 
         elif (op == 'book'): 
             # add book
@@ -153,12 +167,12 @@ class Controller:
             mySql_insert_query = 'INSERT IGNORE INTO Stock (amount, book_id) VALUES (%s, %s)'
             val = (item[4], bookid)
             cursor.execute(mySql_insert_query, val)
-            print('[+] Alert: The stock has been added into the database')
+            print('[+] SUCCESSFUL: The stock has been added into the database')
 
         else:
             mySql_insert_query = 'INSERT IGNORE INTO `LoanDetails` (date, expireDate, book_id, member_id) VALUES (%s, %s, %s, %s)'
             cursor.execute(mySql_insert_query, (item[0], item[1], item[2], item[3]))
-            print('[+] Alert: The LOAN detail has been added into the database')
+            print('[+] SUCCESSFUL: The LOAN detail has been added into the database')
 
     """
     @op = opration code (book | member | loan)
@@ -166,20 +180,20 @@ class Controller:
     """
     def deleteFromDatabase(self, cursor, op, keyTodelete ):
         if(op == 'member'):
-            # try to select first, if it do not exist then prompt an alert. if exist then -> delete it
+            # try to select first, if it do not exist then prompt an SUCCESSFUL. if exist then -> delete it
             members = self.getMemberId(cursor, keyTodelete) # get member id by member.personNumber
             if not self.isEmpty('member' ,members): # check is member exist
                 memberId = members[0]
                 mySql_delete_query = "delete from `Member` where personalNum = '%s' " 
                 cursor.execute(mySql_delete_query, (keyTodelete,)) 
-                print('[+] Alert: The member has been deleted from database')
+                print('[+] SUCCESSFUL: The member has been deleted from database')
                 
         elif(op == 'book'):
             print('delete book')
         else:
-            mySql_delete_query = "delete from `LoanDetails` WHERE bkID = %s AND memberId = %s"
+            mySql_delete_query = "delete from `LoanDetails` WHERE book_id = %s AND member_id = %s"
             cursor.execute(mySql_delete_query, (keyTodelete[0], keyTodelete[1])) # memTodelete[0] = bookId [1] = memberId
-            print('[+] Alert: The loan detail has been deleted from database')
+            print('[+] SUCCESSFUL: The loan detail has been deleted from database')
 
             
 """ 
