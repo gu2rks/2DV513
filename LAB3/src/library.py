@@ -41,6 +41,7 @@ class Controller:
                 books = self.getBookId(cursor, bookKey[0], bookKey[1])
                 if not self.isEmpty('book', books): # check if book exist
                     # check if the loanDetails is exist
+                    # self.stockHandler(cursor, books[0])
                     bookId = books[0] #get the first tuple
                     current = time.time()  # current time in unix time
                     threeWeek = 1814400 # three time in unix time
@@ -70,8 +71,12 @@ class Controller:
         else:
             viewer.invalidInput()
 
-    def stockHandler(self, bookId):
-        mySql_select_query = "select amount from bookStock where"
+    def stockHandler(self, cursor, bookId):
+        mySql_select_query = "select amount from bookStock where book_id = %s"
+        cursor.execute(mySql_select_query, (bookId[0], ))
+        stock = cursor.fetchone()
+        print(stock[0])
+
 
 
     def isEmpty(self, op, item):
@@ -88,13 +93,13 @@ class Controller:
             return False
         
     def getBookId(self, cursor, name, edition):
-        mySql_select_query = "SELECT id FROM `Book` WHERE name = %s AND edition = %s"
+        mySql_select_query = "SELECT bkID FROM `Book` WHERE name = %s AND edition = %s"
         cursor.execute(mySql_select_query, (name, edition))
         records = cursor.fetchall()
         return records
 
     def getMemberId(self, cursor, personNum):
-        mySql_select_query = "SELECT id FROM `Member` WHERE personalNum = '%s' "
+        mySql_select_query = "SELECT memID FROM `Member` WHERE personalNum = '%s' "
         cursor.execute(mySql_select_query, (personNum,))
         records = cursor.fetchall()
         return records
