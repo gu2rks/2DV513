@@ -97,14 +97,7 @@ class Controller:
 
     def isEmpty(self, op, item):
         if (len(item) == 0):  # the tuple is empty
-            if (op == 'member'):
-                print('[!] ERROR: Member is not exist in the database')
-            elif (op == 'book'):
-                print('[!] ERROR: Book is not exist in the database')
-            elif (op == 'loan'):
-                print('[!] ERROR: there is NO data about this specific loan in the database')
-            elif (op == 'exprie'):
-                print('[!] ERROR: there is loan that expried on that specific day')
+            viewer.errorNotexist(op)
             return True
         else:
             return False

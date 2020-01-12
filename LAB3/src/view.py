@@ -61,3 +61,13 @@ def exprie():
     year, month, day = inputDate.split('-')
     date = (year, month, day)
     return date
+
+def errorNotexist(op):
+    if (op == 'member'):
+        print('[!] ERROR: Member is not exist in the database')
+    elif (op == 'book'):
+        print('[!] ERROR: Book is not exist in the database')
+    elif (op == 'loan'):
+        print('[!] ERROR: there is NO data about this specific loan in the database')
+    elif (op == 'exprie'):
+        print('[!] ERROR: there is loan that expried on that specific day')
