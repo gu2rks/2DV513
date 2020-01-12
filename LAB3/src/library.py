@@ -1,7 +1,8 @@
 import sys
 import mysql.connector
 import view as viewer  # import view
-from datetime import datetime
+import datetime
+# from datetime import datetime
 import time
 
 
@@ -48,8 +49,8 @@ class Controller:
                         current = time.time()  # current time in unix time
                         threeWeek = 1814400  # three time in unix time
                         expired = current + threeWeek
-                        expired = datetime.fromtimestamp(int(expired))
-                        current = datetime.fromtimestamp(int(current))
+                        expired = datetime.date.fromtimestamp(int(expired))
+                        current = datetime.date.fromtimestamp(int(current))
                         # now insert loan detail
                         val = (current, expired, bookId[0], memberId[0])
                         self.insertRecord(cursor, 'loan', val)
@@ -74,6 +75,10 @@ class Controller:
                         self.stockHandler(cursor, 'return', bookId[0])
                         self.deleteRecord(
                             cursor, 'loan', (bookId[0], memberId[0]))
+        elif (choice == 3):
+            exprie = viewer.exprie()
+            date = datetime.date(int(exprie[0]), int(exprie[1]), int(exprie[2]))
+            self.getMemberbyExpriedDay(cursor,date)
         else:
             viewer.invalidInput()
 
@@ -91,15 +96,15 @@ class Controller:
             return True
 
     def isEmpty(self, op, item):
-        output = ''
         if (len(item) == 0):  # the tuple is empty
             if (op == 'member'):
-                print('[+] ERROR: Member is not exist in the database')
+                print('[!] ERROR: Member is not exist in the database')
             elif (op == 'book'):
-                print('[+] ERROR: Book is not exist in the database')
+                print('[!] ERROR: Book is not exist in the database')
             elif (op == 'loan'):
-                print(
-                    '[+] ERROR: there is NO data about this specific loan in the database')
+                print('[!] ERROR: there is NO data about this specific loan in the database')
+            elif (op == 'exprie'):
+                print('[!] ERROR: there is loan that expried on that specific day')
             return True
         else:
             return False
@@ -115,6 +120,24 @@ class Controller:
         cursor.execute(mySql_select_query, (personNum,))
         records = cursor.fetchall()
         return records
+
+    def getMemberbyExpriedDay(self, cursor, date):
+        mySql_select_query = """
+                            Select firstName, lastName
+                            From `Member`
+                            JOIN LoanDetails on Member.memID = LoanDetails.member_id
+                            where expireDate in (
+                                select expireDate
+                                from LoanDetails
+                                where expireDate = %s
+                                )"""
+        cursor.execute(mySql_select_query, (date,))
+        records = cursor.fetchall()
+        if not self.isEmpty('exprie', records):
+            print('Please remind these following members to return the borrowed books')
+            for member in records:
+                print('Name: %s %s' %(member[0], member[1]))
+        
 
     def bookHandler(self, cursor):
         choice = viewer.bookView()

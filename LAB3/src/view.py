@@ -7,20 +7,21 @@ def homeView(): # main menu/home page
     return int(input('# '))
 
 def bookView(): # book manu
-    print('Press 1: add book')
-    print('Press 2: delete book')
-    print('Press 3: edit book')
+    print('Press 1: Add book')
+    print('Press 2: Delete book')
+    print('Press 3: Edit book')
     return int(input('# '))
 
 def memberView(): #member menu
-    print('press 1: add member')
-    print('press 2: delete member')
-    print('press 3: edit member')
+    print('press 1: Add member')
+    print('press 2: Delete member')
+    print('press 3: Edit member')
     return int(input('# '))
 
 def loanView():
-    print('Press 1: add loan detail')
-    print('Press 2: delete loan detail')
+    print('Press 1: Add loan detail')
+    print('Press 2: Delete loan detail')
+    print('Press 3: Get member info base on expried day')
     return int(input('# '))
 
 def addBook(): # add book
@@ -34,6 +35,7 @@ def addBook(): # add book
     return book
 
 def addMember(): # add member
+    print('Please enter following information to add new member into the databse')
     firstName = input('[+] firstName: ')
     lastName = input('[+] lastName: ')
     gender = input('[+] gender: ')
@@ -53,3 +55,9 @@ def getBookID():
 
 def invalidInput():
     print('[+] ERROR!: Invalid input')
+
+def exprie():
+    inputDate = input('Enter a date in YYYY-MM-DD format: ')
+    year, month, day = inputDate.split('-')
+    date = (year, month, day)
+    return date
