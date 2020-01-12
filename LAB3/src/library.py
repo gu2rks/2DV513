@@ -138,19 +138,25 @@ class Controller:
             self.deleteRecord(cursor, 'member', personNum)
         elif(choice == 3):
             personNum = viewer.getPersonNum()
-
+            records = self.getMemberId(cursor, personNum)
+            if (not self.isEmpty('member',records)):
+                memberId = records[0]
+                self.updateRecord(cursor, 'member', memberId[0])
         else:
             viewer.invalidInput()
 
-    def updateRecord(self, cursor, op, item):
-        if (op == 'borrow'):
-                # borrow book -> decrease the stock
-                mySql_update_query = "UPDATE Stock SET amount = amount - 1 where Stock.book_id = %s;"
-                cursor.execute(mySql_update_query, (item, ))
+    def updateRecord(self, cursor, op, key):
+        if (op == 'member'):
+            # member = viewer.addMember()
+            # mySql_update_query = "UPDATE `Member` SET "
+        elif (op == 'borrow'):
+            # borrow book -> decrease the stock
+            mySql_update_query = "UPDATE Stock SET amount = amount - 1 where Stock.book_id = %s;"
+            cursor.execute(mySql_update_query, (key, ))
         elif (op == 'return'):
             # return book -> increase the stock
             mySql_update_query = "UPDATE Stock SET amount = amount + 1 where Stock.book_id = %s;"
-            cursor.execute(mySql_update_query, (item, ))
+            cursor.execute(mySql_update_query, (key, ))
 
     """
     @op = opration code (book | member | loan)
