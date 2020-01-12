@@ -6,7 +6,7 @@ import datetime
 import time
 
 
-class Controller:
+class Controller:    
     def __init__(self, mydb):
         cursor = mydb.cursor()
         # fixing utf problem
@@ -162,9 +162,27 @@ class Controller:
                 elif(choice == 3):
                     self.updateRecord(cursor, 'member', memberId[0])
                 elif (choice == 4):
-                    print('get books')
+                    self.getBorrowedBookByMember(cursor, personNum)
             else:
                 viewer.invalidInput()
+    
+    def getBorrowedBookByMember(self, cursor, key):
+        mySql_select_query = """
+                            select *
+                            From Book
+                            where bkID in(
+                                SELECT book_id
+                                From LoanDetails
+                                JOIN `Member` ON LoanDetails.member_id = Member.memID
+                                WHERE personalNum = '%s'
+                            )"""
+        cursor.execute(mySql_select_query, (key,))
+        records = cursor.fetchall()
+        print('The following books have been borrow by this member')
+        count = 0
+        for book in records:
+            count = count + 1
+            print('%d Book name: %s \n\tAuthor: %s Edition: %s' %(count, book[1], book[2], book[3]))
 
     def updateRecord(self, cursor, op, key):
         if (op == 'member'):
