@@ -147,8 +147,13 @@ class Controller:
 
     def updateRecord(self, cursor, op, key):
         if (op == 'member'):
-            # member = viewer.addMember()
-            # mySql_update_query = "UPDATE `Member` SET "
+            member = viewer.addMember()
+            mySql_update_query = "UPDATE `Member` SET firstName = %s, lastName = %s, gender = %s, address = %s, personalNum = %s where Member.memID = %s;"
+            val = (member[0], member[1], member[2], member[3], int(member[4]), key)
+            cursor.execute(mySql_update_query, val)
+            print('[!] SUCESFUL: The MEMBER has been updated')
+        elif (op == 'book'):
+            print('book'):
         elif (op == 'borrow'):
             # borrow book -> decrease the stock
             mySql_update_query = "UPDATE Stock SET amount = amount - 1 where Stock.book_id = %s;"
@@ -168,7 +173,7 @@ class Controller:
             mySql_insert_query = "INSERT IGNORE INTO `Member` (firstName, lastName, gender, address, personalNum) VALUES (%s, %s, %s, %s, %s)"
             val = (item[0], item[1], item[2], item[3], int(item[4]))
             cursor.execute(mySql_insert_query, val)
-            print('[+] SUCESFUL: The MEMBER has been added into the database')
+            print('[!] SUCESFUL: The MEMBER has been added into the database')
 
         elif (op == 'book'):
             # add book
@@ -182,13 +187,13 @@ class Controller:
             mySql_insert_query = 'INSERT IGNORE INTO Stock (amount, book_id) VALUES (%s, %s)'
             val = (item[4], bookid)
             cursor.execute(mySql_insert_query, val)
-            print('[+] SUCCESSFUL: The stock has been added into the database')
+            print('[!] SUCCESSFUL: The stock has been added into the database')
 
         else:
             mySql_insert_query = 'INSERT IGNORE INTO `LoanDetails` (date, expireDate, book_id, member_id) VALUES (%s, %s, %s, %s)'
             cursor.execute(mySql_insert_query,
                            (item[0], item[1], item[2], item[3]))
-            print('[+] SUCCESSFUL: The LOAN detail has been added into the database')
+            print('[!] SUCCESSFUL: The LOAN detail has been added into the database')
 
     """
     @op = opration code (book | member | loan)
