@@ -62,7 +62,7 @@ class Controller:
         count = 0
         for book in records:
             count = count + 1
-            print('[RANK %d] Book name: %s Totalt loan: %s\n\tAuthor: %s Type: %s Edition: %s' %(count, book[4], book[0], book[1], book[2], book[3]))
+            print('[RANK %d] Book name: %s Totalt loan: %s\n\tAuthor: %s Type: %s Edition: %s' %(count,book[0], book[4], book[1], book[2], book[3]))
 
     
 
