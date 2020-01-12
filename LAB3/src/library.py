@@ -138,7 +138,11 @@ class Controller:
             book = viewer.addBook()  # book as tuple
             self.insertRecord(cursor, "book", book)
         elif (choice == 2):
-            print('delete')
+             book = viewer.getBookID()
+             records = self.getBookId(cursor, book[0], book[1])
+             if (not self.isEmpty('book', records)):
+                bookId = records[0]
+                self.deleteRecord(cursor, 'book', bookId[0])
         elif (choice == 3):
             book = viewer.getBookID()
             records = self.getBookId(cursor, book[0], book[1])
@@ -236,7 +240,9 @@ class Controller:
                 print('[!] SUCCESSFUL: The member has been deleted from database')
 
         elif(op == 'book'):
-            print('delete book')
+            mySql_delete_query = "delete from `Book` WHERE bkID = %s"
+            cursor.execute(mySql_delete_query, (keyTodelete,))
+            print('[!] SUCCESSFUL: The book has been deleted from database')
         else:
             mySql_delete_query = "delete from `LoanDetails` WHERE book_id = %s AND member_id = %s"
             # memTodelete[0] = bookId [1] = memberId
