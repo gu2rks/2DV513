@@ -131,7 +131,6 @@ class Controller:
             for member in records:
                 print('Name: %s %s' %(member[0], member[1]))
         
-
     def bookHandler(self, cursor):
         choice = viewer.bookView()
         if (choice == 1):
@@ -144,7 +143,7 @@ class Controller:
             records = self.getBookId(cursor, book[0], book[1])
             if (not self.isEmpty('book', records)):
                 bookId = records[0]
-                self.updateRecord(cursor, 'book', bookId[0])
+                self.updateRecord(cursor, 'book', bookId[0])            
         else:
             viewer.invalidInput()
 
@@ -153,17 +152,19 @@ class Controller:
         if(choice == 1):
             member = viewer.addMember()
             self.insertRecord(cursor, "member", member)
-        elif(choice == 2):
-            personNum = viewer.getPersonNum()
-            self.deleteRecord(cursor, 'member', personNum)
-        elif(choice == 3):
+        else:
             personNum = viewer.getPersonNum()
             records = self.getMemberId(cursor, personNum)
             if (not self.isEmpty('member',records)):
                 memberId = records[0]
-                self.updateRecord(cursor, 'member', memberId[0])
-        else:
-            viewer.invalidInput()
+                if(choice == 2):
+                    self.deleteRecord(cursor, 'member', memberId[0])
+                elif(choice == 3):
+                    self.updateRecord(cursor, 'member', memberId[0])
+                elif (choice == 4):
+                    print('get books')
+            else:
+                viewer.invalidInput()
 
     def updateRecord(self, cursor, op, key):
         if (op == 'member'):
@@ -228,12 +229,12 @@ class Controller:
         if(op == 'member'):
             # try to select first, if it do not exist then prompt an SUCCESSFUL. if exist then -> delete it
             # get member id by member.personNumber
-            members = self.getMemberId(cursor, keyTodelete)
-            if not self.isEmpty('member', members):  # check is member exist
-                memberId = members[0]
-                mySql_delete_query = "delete from `Member` where personalNum = '%s' "
-                cursor.execute(mySql_delete_query, (keyTodelete,))
-                print('[!] SUCCESSFUL: The member has been deleted from database')
+            # members = self.getMemberId(cursor, keyTodelete)
+            # if not self.isEmpty('member', members):  # check is member exist
+            #     memberId = members[0]
+            mySql_delete_query = "delete from `Member` where personalNum = '%s' "
+            cursor.execute(mySql_delete_query, (keyTodelete,))
+            print('[!] SUCCESSFUL: The member has been deleted from database')
 
         elif(op == 'book'):
             print('delete book')

@@ -16,6 +16,7 @@ def memberView(): #member menu
     print('press 1: Add member')
     print('press 2: Delete member')
     print('press 3: Edit member')
+    print('press 4: Get borrowed book by specific member')
     return int(input('# '))
 
 def loanView():
