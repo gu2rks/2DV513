@@ -33,8 +33,21 @@ class Controller:
                 viewer.invalidInput()
             mydb.commit()  # commit changes in database
     def bestReader (self, cursor):
-        print('bestreader')
-        
+        mySql_select_query = """Select concat(firstName, ' ', lastName) as MemberName, count(memID) as numberOfLaons
+                            from `Member`
+                            JOIN loanDetails on loanDetails.member_id = Member.memID
+                            GROUP BY MemberName
+                            HAVING numberOfLaons > 0
+                            ORDER BY numberOfLaons DESC
+                            """
+        cursor.execute(mySql_select_query)
+        records = cursor.fetchall() # need to change to fetch size 3
+        print('The BEST READER (member that borrowed most books) during this period')                             
+        count = 0
+        for member in records:
+            count = count + 1
+            print('[RANK %d] Name: %s Totalt loan: %s' %(count, member[0], member[1]))
+
     def bestBooks(self, cursor):
         mySql_select_query = """Select name as bookName,author as bookAuthor, type as bookeType, edition as bookEd ,count(bkID) as numberOfLaons
                                 from Book
