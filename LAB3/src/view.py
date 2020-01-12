@@ -3,7 +3,9 @@ def homeView(): # main menu/home page
     print('Press 1: manage member')
     print('Press 2: manage book')
     print('Press 3: manage loan')
-    print('Press 4: exit')
+    print('Press 4: Get most read book (best book)')
+    print('Press 5: Get best reader')
+    print('Press 6: exit')
     return int(input('# '))
 
 def bookView(): # book manu

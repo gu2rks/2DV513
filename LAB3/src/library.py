@@ -23,11 +23,35 @@ class Controller:
             elif (choice == 3):
                 self.loanHandler(cursor)
             elif (choice == 4):
-                print('exit')
+                self.bestBooks(cursor)
+            elif (choice == 5):
+                self.bestReader(cursor)
+            elif (choice == 6):
+                print('Exit the program')
                 sys.exit()
             else:
                 viewer.invalidInput()
             mydb.commit()  # commit changes in database
+    def bestReader (self, cursor):
+        print('bestreader')
+        
+    def bestBooks(self, cursor):
+        mySql_select_query = """Select name as bookName,author as bookAuthor, type as bookeType, edition as bookEd ,count(bkID) as numberOfLaons
+                                from Book
+                                JOIN LoanDetails on LoanDetails.book_id = Book.bkID
+                                GROUP BY bookName,bookAuthor, bookeType,bookEd
+                                HAVING numberOfLaons > 0
+                                ORDER BY numberOfLaons DESC
+                            """
+        cursor.execute(mySql_select_query)
+        records = cursor.fetchall() # need to change to fetch size 3
+        print('The BEST BOOKS (most borrowed books) during this period')
+        count = 0
+        for book in records:
+            count = count + 1
+            print('[RANK %d] Book name: %s Totalt loan: %s\n\tAuthor: %s Type: %s Edition: %s' %(count, book[4], book[0], book[1], book[2], book[3]))
+
+    
 
     def loanHandler(self, cursor):
         choice = viewer.loanView()
