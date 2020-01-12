@@ -6,7 +6,7 @@ import datetime
 import time
 
 
-class Controller:
+class Controller:    
     def __init__(self, mydb):
         cursor = mydb.cursor()
         # fixing utf problem
@@ -23,11 +23,48 @@ class Controller:
             elif (choice == 3):
                 self.loanHandler(cursor)
             elif (choice == 4):
-                print('exit')
+                self.bestBooks(cursor)
+            elif (choice == 5):
+                self.bestReader(cursor)
+            elif (choice == 6):
+                print('Exit the program')
                 sys.exit()
             else:
                 viewer.invalidInput()
             mydb.commit()  # commit changes in database
+    def bestReader (self, cursor):
+        mySql_select_query = """Select concat(firstName, ' ', lastName) as MemberName, count(memID) as numberOfLaons
+                            from `Member`
+                            JOIN loanDetails on loanDetails.member_id = Member.memID
+                            GROUP BY MemberName
+                            HAVING numberOfLaons > 0
+                            ORDER BY numberOfLaons DESC
+                            """
+        cursor.execute(mySql_select_query)
+        records = cursor.fetchall() # need to change to fetch size 3
+        print('The BEST READER (member that borrowed most books) during this period')                             
+        count = 0
+        for member in records:
+            count = count + 1
+            print('[RANK %d] Name: %s Totalt loan: %s' %(count, member[0], member[1]))
+
+    def bestBooks(self, cursor):
+        mySql_select_query = """Select name as bookName,author as bookAuthor, type as bookeType, edition as bookEd ,count(bkID) as numberOfLaons
+                                from Book
+                                JOIN LoanDetails on LoanDetails.book_id = Book.bkID
+                                GROUP BY bookName,bookAuthor, bookeType,bookEd
+                                HAVING numberOfLaons > 0
+                                ORDER BY numberOfLaons DESC
+                            """
+        cursor.execute(mySql_select_query)
+        records = cursor.fetchall() # need to change to fetch size 3
+        print('The BEST BOOKS (most borrowed books) during this period')
+        count = 0
+        for book in records:
+            count = count + 1
+            print('[RANK %d] Book name: %s Totalt loan: %s\n\tAuthor: %s Type: %s Edition: %s' %(count,book[0], book[4], book[1], book[2], book[3]))
+
+    
 
     def loanHandler(self, cursor):
         choice = viewer.loanView()
@@ -131,7 +168,6 @@ class Controller:
             for member in records:
                 print('Name: %s %s' %(member[0], member[1]))
         
-
     def bookHandler(self, cursor):
         choice = viewer.bookView()
         if (choice == 1):
@@ -148,7 +184,7 @@ class Controller:
             records = self.getBookId(cursor, book[0], book[1])
             if (not self.isEmpty('book', records)):
                 bookId = records[0]
-                self.updateRecord(cursor, 'book', bookId[0])
+                self.updateRecord(cursor, 'book', bookId[0])            
         else:
             viewer.invalidInput()
 
@@ -157,17 +193,43 @@ class Controller:
         if(choice == 1):
             member = viewer.addMember()
             self.insertRecord(cursor, "member", member)
-        elif(choice == 2):
-            personNum = viewer.getPersonNum()
-            self.deleteRecord(cursor, 'member', personNum)
-        elif(choice == 3):
+        else:
             personNum = viewer.getPersonNum()
             records = self.getMemberId(cursor, personNum)
+            # check if member exist in database
             if (not self.isEmpty('member',records)):
                 memberId = records[0]
-                self.updateRecord(cursor, 'member', memberId[0])
-        else:
-            viewer.invalidInput()
+                if(choice == 2):
+                    self.deleteRecord(cursor, 'member', memberId[0])
+                elif(choice == 3):
+                    self.updateRecord(cursor, 'member', memberId[0])
+                elif (choice == 4):
+                    # check if member has borrow anybook
+                    mySql_select_query = "SELECT * FROM `LoanDetails` WHERE member_id = %s"
+                    cursor.execute(mySql_select_query, (memberId[0],))
+                    records = cursor.fetchall()
+                    if not self.isEmpty('loan', records):
+                        self.getBorrowedBookByMember(cursor, personNum)
+            else:
+                viewer.invalidInput()
+    
+    def getBorrowedBookByMember(self, cursor, key):
+        mySql_select_query = """
+                            select *
+                            From Book
+                            where bkID in(
+                                SELECT book_id
+                                From LoanDetails
+                                JOIN `Member` ON LoanDetails.member_id = Member.memID
+                                WHERE personalNum = '%s'
+                            )"""
+        cursor.execute(mySql_select_query, (key,))
+        records = cursor.fetchall()
+        print('The following books have been borrow by this member')
+        count = 0
+        for book in records:
+            count = count + 1
+            print('%d Book name: %s \n\tAuthor: %s Edition: %s' %(count, book[1], book[2], book[3]))
 
     def updateRecord(self, cursor, op, key):
         if (op == 'member'):
@@ -232,12 +294,12 @@ class Controller:
         if(op == 'member'):
             # try to select first, if it do not exist then prompt an SUCCESSFUL. if exist then -> delete it
             # get member id by member.personNumber
-            members = self.getMemberId(cursor, keyTodelete)
-            if not self.isEmpty('member', members):  # check is member exist
-                memberId = members[0]
-                mySql_delete_query = "delete from `Member` where personalNum = '%s' "
-                cursor.execute(mySql_delete_query, (keyTodelete,))
-                print('[!] SUCCESSFUL: The member has been deleted from database')
+            # members = self.getMemberId(cursor, keyTodelete)
+            # if not self.isEmpty('member', members):  # check is member exist
+            #     memberId = members[0]
+            mySql_delete_query = "delete from `Member` where personalNum = '%s' "
+            cursor.execute(mySql_delete_query, (keyTodelete,))
+            print('[!] SUCCESSFUL: The member has been deleted from database')
 
         elif(op == 'book'):
             mySql_delete_query = "delete from `Book` WHERE bkID = %s"
