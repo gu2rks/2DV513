@@ -8,8 +8,8 @@ def homeView(): # main menu/home page
 
 def bookView(): # book manu
     print('Press 1: add book')
-    print('Press 2: edit book')
-    print('Press 3: delete book')
+    print('Press 2: delete book')
+    print('Press 3: edit book')
     return int(input('# '))
 
 def memberView(): #member menu

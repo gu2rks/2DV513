@@ -124,7 +124,11 @@ class Controller:
         elif (choice == 2):
             print('delete')
         elif (choice == 3):
-            print('edit')
+            book = viewer.getBookID()
+            records = self.getBookId(cursor, book[0], book[1])
+            if (not self.isEmpty('book', records)):
+                bookId = records[0]
+                self.updateRecord(cursor, 'book', bookId[0])
         else:
             viewer.invalidInput()
 
@@ -153,7 +157,11 @@ class Controller:
             cursor.execute(mySql_update_query, val)
             print('[!] SUCESFUL: The MEMBER has been updated')
         elif (op == 'book'):
-            print('book'):
+            book = viewer.addBook()
+            mySql_update_query = "UPDATE Book SET name = %s, author = %s , edition = %s, type = %s where Book.bkID = %s;"
+            val = (book[0], book[1], book[2], book[3], key)
+            cursor.execute(mySql_update_query, val)
+            print('[!] SUCESFUL: The BOOK has been updated')
         elif (op == 'borrow'):
             # borrow book -> decrease the stock
             mySql_update_query = "UPDATE Stock SET amount = amount - 1 where Stock.book_id = %s;"
@@ -209,7 +217,7 @@ class Controller:
                 memberId = members[0]
                 mySql_delete_query = "delete from `Member` where personalNum = '%s' "
                 cursor.execute(mySql_delete_query, (keyTodelete,))
-                print('[+] SUCCESSFUL: The member has been deleted from database')
+                print('[!] SUCCESSFUL: The member has been deleted from database')
 
         elif(op == 'book'):
             print('delete book')
@@ -218,7 +226,7 @@ class Controller:
             # memTodelete[0] = bookId [1] = memberId
             cursor.execute(mySql_delete_query,
                            (keyTodelete[0], keyTodelete[1]))
-            print('[+] SUCCESSFUL: The loan detail has been deleted from database')
+            print('[!] SUCCESSFUL: The loan detail has been deleted from database')
 
 
 """ 
