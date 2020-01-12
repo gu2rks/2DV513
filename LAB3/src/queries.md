@@ -57,3 +57,26 @@ Where book_id  in (
     where book_id = 2
 )
 ```
+
+members that have borrowed the most books
+``` sql
+Use Library;
+Select concat(firstName, ' ', lastName) as MemberName, count(memID) as numberOfLaons
+from Member
+JOIN loanDetails on loanDetails.member_id = Member.memID
+GROUP BY MemberName
+HAVING numberOfLaons > 0
+ORDER BY numberOfLaons DEsC
+
+```
+books that have borrowed the most books
+``` sql
+Use Library;
+Select concat(name,' ', type) as bookDetail, count(bkID) as numberOfLaons
+from Book
+JOIN LoanDetails on LoanDetails.book_id = Book.bkID
+GROUP BY bookDetail
+HAVING numberOfLaons > 0
+ORDER BY numberOfLaons DEsC
+
+```
