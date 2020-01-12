@@ -155,6 +155,7 @@ class Controller:
         else:
             personNum = viewer.getPersonNum()
             records = self.getMemberId(cursor, personNum)
+            # check if member exist in database
             if (not self.isEmpty('member',records)):
                 memberId = records[0]
                 if(choice == 2):
@@ -162,7 +163,12 @@ class Controller:
                 elif(choice == 3):
                     self.updateRecord(cursor, 'member', memberId[0])
                 elif (choice == 4):
-                    self.getBorrowedBookByMember(cursor, personNum)
+                    # check if member has borrow anybook
+                    mySql_select_query = "SELECT * FROM `LoanDetails` WHERE member_id = %s"
+                    cursor.execute(mySql_select_query, (memberId[0],))
+                    records = cursor.fetchall()
+                    if not self.isEmpty('loan', records):
+                        self.getBorrowedBookByMember(cursor, personNum)
             else:
                 viewer.invalidInput()
     

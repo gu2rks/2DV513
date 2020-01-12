@@ -82,15 +82,13 @@ ORDER BY numberOfLaons DEsC
 ```
 get borrowed book info based on a giver personNum
 ``` sql
-USE Library;
 select *
 From Book
-where bkID in (
-	Select book_id
-	From LoanDetails
-	JOIN Member ON LoanDetails.member_id = Member.memID
-	JOIN Book on LoanDetails.book_id = Book.bkID
-	WHERE personalNum = '34234545'
+where bkID in(
+    SELECT book_id
+    From LoanDetails
+    JOIN `Member` ON LoanDetails.member_id = Member.memID
+    WHERE personalNum = '1111');
 )
 
 ```
