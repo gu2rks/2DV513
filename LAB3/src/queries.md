@@ -72,10 +72,10 @@ ORDER BY numberOfLaons DEsC
 books that have borrowed the most books
 ``` sql
 Use Library;
-Select concat(name,' ', type) as bookDetail, count(bkID) as numberOfLaons
+Select name as BookName,author as bookAuthor, type as bookeType, edition as bookEd ,count(bkID) as numberOfLaons
 from Book
 JOIN LoanDetails on LoanDetails.book_id = Book.bkID
-GROUP BY bookDetail
+GROUP BY BookName,bookAuthor, bookeType,bookEd
 HAVING numberOfLaons > 0
 ORDER BY numberOfLaons DEsC
 
