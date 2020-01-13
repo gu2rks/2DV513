@@ -174,3 +174,14 @@ def stockHandler(cursor, op, bookId):
     else:
         updateRecord(cursor, op, bookId)
         return True
+
+def setup(cursor):
+    cursor.execute("SET NAMES utf8mb4")
+    cursor.execute("SET CHARACTER SET utf8mb4")
+    cursor.execute("SET character_set_connection=utf8mb4")
+    cursor.execute("DROP VIEW IF EXISTS bookStock")
+    mysql_view = """CREATE VIEW bookStock As
+                    select *
+                    from Book
+                    join Stock on Book.bkID = Stock.book_id;"""
+    cursor.execute(mysql_view)

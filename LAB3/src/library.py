@@ -11,9 +11,7 @@ class Controller:
     def __init__(self, mydb):
         cursor = mydb.cursor()
         # fixing utf problem
-        cursor.execute("SET NAMES utf8mb4")
-        cursor.execute("SET CHARACTER SET utf8mb4")
-        cursor.execute("SET character_set_connection=utf8mb4")
+        dbManager.setup(cursor)
         try: 
             while (True):
                 choice = viewer.homeView()  # call main menu
@@ -161,6 +159,19 @@ if len(sys.argv) < 1:
     print('[+] ERROR: USECASE python3 library.py [password]')
     sys.exit()
 
+intro = '''
+88888888ba                          88     I8,        8        ,8I                                        
+88      "8b                         88     `8b       d8b       d8'                                        
+88      ,8P                         88      "8,     ,8"8,     ,8"                                         
+88aaaaaa8P'  ,adPPYba,   ,adPPYba,  88   ,d8 Y8     8P Y8     8P  ,adPPYba,  8b,dPPYba, 88,dPYba,,adPYba, 
+88""""""8b, a8"     "8a a8"     "8a 88 ,a8"  `8b   d8' `8b   d8' a8"     "8a 88P'   "Y8 88P'   "88"    "8a
+88      `8b 8b       d8 8b       d8 8888[     `8a a8'   `8a a8'  8b       d8 88         88      88      88
+88      a8P "8a,   ,a8" "8a,   ,a8" 88`"Yba,   `8a8'     `8a8'   "8a,   ,a8" 88         88      88      88
+88888888P"   `"YbbdP"'   `"YbbdP"'  88   `Y8a   `8'       `8'     `"YbbdP"'  88         88      88      88
+
+Wellcome to BoookWorm
+By aa224iu and fj222jy'''
+print(intro)
 try:  # connecto the database
     mydb = mysql.connector.connect(
         host="localhost",
