@@ -162,3 +162,15 @@ def getBorrowedBookByMember(cursor, key):
     for book in records:
         count = count + 1
         print('%d Book name: %s \n\tAuthor: %s Edition: %s' %(count, book[1], book[2], book[3]))
+
+def stockHandler(cursor, op, bookId):
+    mySql_select_query = "SELECT amount from bookStock where book_id = %s"
+    cursor.execute(mySql_select_query, (bookId, ))
+    records = cursor.fetchone()
+    stock = int(records[0])
+    if stock == 0:  # no book left in stock
+        print('[!] Error: OUT OF STOCK\nThis book is not in the library at the moment')
+        return False
+    else:
+        updateRecord(cursor, op, bookId)
+        return True
