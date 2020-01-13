@@ -1,5 +1,4 @@
 def homeView(): # main menu/home page
-    print('')
     print('Press 1: manage member')
     print('Press 2: manage book')
     print('Press 3: manage loan')
