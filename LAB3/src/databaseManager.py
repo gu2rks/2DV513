@@ -79,7 +79,7 @@ def getBookId(cursor, name, edition):
     return records
 
 """
-@op = opration code (book | member | loan)
+@op = opration code
 @item = item that need to be add in database (tuples)
 """
 def insertRecord(cursor, op, item):

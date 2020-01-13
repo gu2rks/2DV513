@@ -14,25 +14,27 @@ class Controller:
         cursor.execute("SET NAMES utf8mb4")
         cursor.execute("SET CHARACTER SET utf8mb4")
         cursor.execute("SET character_set_connection=utf8mb4")
-
-        while (True):
-            choice = viewer.homeView()  # call main menu
-            if (choice == 1):
-                self.memberHandler(cursor)
-            elif (choice == 2):
-                self.bookHandler(cursor)
-            elif (choice == 3):
-                self.loanHandler(cursor)
-            elif (choice == 4):
-                dbManager.bestBooks(cursor)
-            elif (choice == 5):
-                dbManager.bestReader(cursor)
-            elif (choice == 6):
-                print('Exit the program')
-                sys.exit()
-            else:
-                viewer.invalidInput()
-            mydb.commit()  # commit changes in database
+        try: 
+            while (True):
+                choice = viewer.homeView()  # call main menu
+                if (choice == 1):
+                    self.memberHandler(cursor)
+                elif (choice == 2):
+                    self.bookHandler(cursor)
+                elif (choice == 3):
+                    self.loanHandler(cursor)
+                elif (choice == 4):
+                    dbManager.bestBooks(cursor)
+                elif (choice == 5):
+                    dbManager.bestReader(cursor)
+                elif (choice == 6):
+                    print('Exit the application')
+                    sys.exit()
+                else:
+                    viewer.invalidInput()
+                mydb.commit()  # commit changes in database
+        except KeyboardInterrupt as e:
+            sys.exit("User pressed ctrl + c to exit the application")
 
     def loanHandler(self, cursor):
         choice = viewer.loanView()
@@ -82,8 +84,9 @@ class Controller:
                             cursor, LOAN, (bookId[0], memberId[0]))
         elif (choice == 3):
             exprie = viewer.exprie()
-            date = datetime.date(int(exprie[0]), int(exprie[1]), int(exprie[2]))
-            dbManager.getMemberbyExpriedDay(cursor,date)
+            if self.validation(LOAN, exprie):
+                date = datetime.date(int(exprie[0]), int(exprie[1]), int(exprie[2]))
+                dbManager.getMemberbyExpriedDay(cursor,date)
         else:
             viewer.invalidInput()
 
@@ -109,7 +112,9 @@ class Controller:
         choice = viewer.memberView()
         if(choice == 1):
             member = viewer.addMember()
-            dbManager.insertRecord(cursor, MEMBER, member)
+            personNum = member[4]
+            if (self.validation(MEMBER, personNum)):
+                dbManager.insertRecord(cursor, MEMBER, member)
         else:
             personNum = viewer.getPersonNum()
             records = dbManager.getMemberId(cursor, personNum)
@@ -129,6 +134,24 @@ class Controller:
                         dbManager.getBorrowedBookByMember(cursor, personNum)
             else:
                 viewer.invalidInput()
+
+    def validation(self, op, toValidate):
+        if (op == MEMBER):
+            m = int(toValidate[2:4])
+            d = int(toValidate[4:6])
+            if (len(person) == 10):
+                if (m > 0 and m < 13):
+                    if(d > 0 and d < 32):
+                        return True
+            else:     
+                viewer.errorNotexist('personNum')
+        elif (op == LOAN):
+            try:
+                date = datetime.date(int(toValidate[0]), int(toValidate[1]), int(toValidate[2]))
+                return True
+            except ValueError as e:
+                print('[!] Error: ', e)
+                return False
 
 """ 
 MAIN
@@ -155,4 +178,6 @@ BOOK = 'book'
 LOAN = 'loan'
 BORROW = 'borrow'
 RETURNBOOK = 'return'
+
 controller = Controller(mydb)  # create a Controller
+

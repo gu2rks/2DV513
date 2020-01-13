@@ -92,3 +92,13 @@ where bkID in(
 )
 
 ```
+
+# book type
+1.  Children's 
+2.  Drama 
+3.   Fantasy 
+4.    Horror 
+5.     Romance
+6.      Science fiction 
+7.       Biography 
+8.       ETC
