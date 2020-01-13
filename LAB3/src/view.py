@@ -38,7 +38,8 @@ def addBook(): # add book
 
 def bookType():
     print('Please choose one of the following genres, for instance Press 7 for Fantasy book')
-    reps = input('1.  Children \n2. Drama \n3. Fantasy \n4. Horror \n5. Romance \n6. Science fiction \n7. ETC \n# :')
+    print('1. Children \n2. Drama \n3. Fantasy \n4. Horror \n5. Romance \n6. Science fiction \n7. ETC')
+    reps = input('#: ')
     if reps == 1:
         return 'Children'
     elif reps == 2:
@@ -58,14 +59,14 @@ def addMember(): # add member
     print('Please enter following information to add new member into the databse')
     firstName = input('first name: ')
     lastName = input('last neme: ')
-    gender = gender()
+    gender = genderValidate()
     address = input('adress: ')
     persNum = input('personal number in YYMMDDXXXX format: ')
     member = (firstName, lastName, gender, address, persNum)
     return member
 
-def gender():
-    reps = input('Press 1: Female \nPress 1: Male\n# :)
+def genderValidate():
+    reps = input('Press 1: Female \nPress 1: Male\n# :')
     if reps == 1:
         return 'male'
     else:
