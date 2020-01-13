@@ -3,6 +3,8 @@ import view as viewer  # import view
 MEMBER = 'member'
 BOOK = 'book'
 LOAN = 'loan'
+BORROW = 'borrow'
+RETURNBOOK = 'return'
 
 def bestReader (cursor):
         mySql_select_query = """Select concat(firstName, ' ', lastName) as MemberName, count(memID) as numberOfLaons
@@ -101,3 +103,41 @@ def insertRecord(cursor, op, item):
         cursor.execute(mySql_insert_query,
                         (item[0], item[1], item[2], item[3]))
         print('[!] SUCCESSFUL: The LOAN detail has been added into the database')
+
+def deleteRecord(cursor, op, key):
+    if(op == MEMBER):
+        mySql_delete_query = "delete from `Member` where memID = '%s' "
+        cursor.execute(mySql_delete_query, (key,))
+        print('[!] SUCCESSFUL: The member has been deleted from database')
+    elif(op == BOOK):
+        mySql_delete_query = "delete from `Book` WHERE bkID = %s"
+        cursor.execute(mySql_delete_query, (key,))
+        print('[!] SUCCESSFUL: The book has been deleted from database')
+    else:
+        mySql_delete_query = "delete from `LoanDetails` WHERE book_id = %s AND member_id = %s"
+        # memTodelete[0] = bookId [1] = memberId
+        cursor.execute(mySql_delete_query,
+                        (key[0], key[1]))
+        print('[!] SUCCESSFUL: The loan detail has been deleted from database')
+
+def updateRecord(cursor, op, key):
+    if (op == MEMBER):
+        member = viewer.addMember()
+        mySql_update_query = "UPDATE `Member` SET firstName = %s, lastName = %s, gender = %s, address = %s, personalNum = %s where Member.memID = %s;"
+        val = (member[0], member[1], member[2], member[3], int(member[4]), key)
+        cursor.execute(mySql_update_query, val)
+        print('[!] SUCESFUL: The MEMBER has been updated')
+    elif (op == BOOK):
+        book = viewer.addBook()
+        mySql_update_query = "UPDATE Book SET name = %s, author = %s , edition = %s, type = %s where Book.bkID = %s;"
+        val = (book[0], book[1], book[2], book[3], key)
+        cursor.execute(mySql_update_query, val)
+        print('[!] SUCESFUL: The BOOK has been updated')
+    elif (op == BORROW):
+        # borrow book -> decrease the stock
+        mySql_update_query = "UPDATE Stock SET amount = amount - 1 where Stock.book_id = %s;"
+        cursor.execute(mySql_update_query, (key, ))
+    elif (op == RETURNBOOK):
+        # return book -> increase the stock
+        mySql_update_query = "UPDATE Stock SET amount = amount + 1 where Stock.book_id = %s;"
+        cursor.execute(mySql_update_query, (key, ))

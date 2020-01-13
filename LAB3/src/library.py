@@ -130,10 +130,10 @@ class Controller:
             if not dbManager.isEmpty(BOOK, records): 
                 if (choice == 2):
                         bookId = records[0]
-                        self.deleteRecord(cursor, BOOK, bookId[0])
+                        dbManager.deleteRecord(cursor, BOOK, bookId[0])
                 elif (choice == 3):
                         bookId = records[0]
-                        self.updateRecord(cursor, BOOK, bookId[0])            
+                        dbManager.updateRecord(cursor, BOOK, bookId[0])            
             else:
                 viewer.invalidInput()
 
@@ -149,9 +149,9 @@ class Controller:
             if (not dbManager.isEmpty(MEMBER,records)):
                 memberId = records[0]
                 if(choice == 2):
-                    self.deleteRecord(cursor, MEMBER, memberId[0])
+                    dbManager.deleteRecord(cursor, MEMBER, memberId[0])
                 elif(choice == 3):
-                    self.updateRecord(cursor, MEMBER, memberId[0])
+                    dbManager.updateRecord(cursor, MEMBER, memberId[0])
                 elif (choice == 4):
                     # check if member has borrow anybook
                     mySql_select_query = "SELECT * FROM `LoanDetails` WHERE member_id = %s"
