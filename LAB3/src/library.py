@@ -118,65 +118,46 @@ class Controller:
         cursor.execute(mySql_select_query, (personNum,))
         records = cursor.fetchall()
         return records
-
-    def getMemberbyExpriedDay(self, cursor, date):
-        mySql_select_query = """
-                            Select firstName, lastName
-                            From `Member`
-                            JOIN LoanDetails on Member.memID = LoanDetails.member_id
-                            where expireDate in (
-                                select expireDate
-                                from LoanDetails
-                                where expireDate = %s
-                                )"""
-        cursor.execute(mySql_select_query, (date,))
-        records = cursor.fetchall()
-        if not self.isEmpty('exprie', records):
-            print('Please remind these following members to return the borrowed books')
-            for member in records:
-                print('Name: %s %s' %(member[0], member[1]))
         
     def bookHandler(self, cursor):
         choice = viewer.bookView()
         if (choice == 1):
             book = viewer.addBook()  # book as tuple
-            self.insertRecord(cursor, "book", book)
-        elif (choice == 2):
-             book = viewer.getBookID()
-             records = self.getBookId(cursor, book[0], book[1])
-             if (not self.isEmpty('book', records)):
-                bookId = records[0]
-                self.deleteRecord(cursor, 'book', bookId[0])
-        elif (choice == 3):
+            dbManager.insertRecord(cursor, BOOK, book)
+        else:
             book = viewer.getBookID()
             records = self.getBookId(cursor, book[0], book[1])
-            if (not self.isEmpty('book', records)):
-                bookId = records[0]
-                self.updateRecord(cursor, 'book', bookId[0])            
-        else:
-            viewer.invalidInput()
+            if not dbManager.isEmpty(BOOK, records): 
+                if (choice == 2):
+                        bookId = records[0]
+                        self.deleteRecord(cursor, BOOK, bookId[0])
+                elif (choice == 3):
+                        bookId = records[0]
+                        self.updateRecord(cursor, BOOK, bookId[0])            
+            else:
+                viewer.invalidInput()
 
     def memberHandler(self, cursor):
         choice = viewer.memberView()
         if(choice == 1):
             member = viewer.addMember()
-            self.insertRecord(cursor, "member", member)
+            dbManager.insertRecord(cursor, MEMBER, member)
         else:
             personNum = viewer.getPersonNum()
-            records = self.getMemberId(cursor, personNum)
+            records = dbManager.getMemberId(cursor, personNum)
             # check if member exist in database
-            if (not self.isEmpty('member',records)):
+            if (not dbManager.isEmpty(MEMBER,records)):
                 memberId = records[0]
                 if(choice == 2):
-                    self.deleteRecord(cursor, 'member', memberId[0])
+                    self.deleteRecord(cursor, MEMBER, memberId[0])
                 elif(choice == 3):
-                    self.updateRecord(cursor, 'member', memberId[0])
+                    self.updateRecord(cursor, MEMBER, memberId[0])
                 elif (choice == 4):
                     # check if member has borrow anybook
                     mySql_select_query = "SELECT * FROM `LoanDetails` WHERE member_id = %s"
                     cursor.execute(mySql_select_query, (memberId[0],))
                     records = cursor.fetchall()
-                    if not self.isEmpty('loan', records):
+                    if not dbManager.isEmpty(LOAN, records):
                         self.getBorrowedBookByMember(cursor, personNum)
             else:
                 viewer.invalidInput()
@@ -295,4 +276,7 @@ except Exception as e:
     sys.exit("Can't connect to database")
 
 
+MEMBER = 'member'
+BOOK = 'book'
+LOAN = 'loan'
 controller = Controller(mydb)  # create a Controller

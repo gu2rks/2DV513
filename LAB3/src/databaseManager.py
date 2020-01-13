@@ -1,5 +1,9 @@
 import view as viewer  # import view
 
+MEMBER = 'member'
+BOOK = 'book'
+LOAN = 'loan'
+
 def bestReader (cursor):
         mySql_select_query = """Select concat(firstName, ' ', lastName) as MemberName, count(memID) as numberOfLaons
                             from `Member`
@@ -60,3 +64,40 @@ def isEmpty(op, item):
     else:
         return False
 
+def getMemberId(cursor, personNum):
+    mySql_select_query = "SELECT memID FROM `Member` WHERE personalNum = '%s' "
+    cursor.execute(mySql_select_query, (personNum,))
+    records = cursor.fetchall()
+    return records
+
+"""
+@op = opration code (book | member | loan)
+@item = item that need to be add in database (tuples)
+"""
+def insertRecord(cursor, op, item):
+    if(op == MEMBER):
+        # note: member = (firstName, lastName, gender, address, personalNumn)
+        mySql_insert_query = "INSERT IGNORE INTO `Member` (firstName, lastName, gender, address, personalNum) VALUES (%s, %s, %s, %s, %s)"
+        val = (item[0], item[1], item[2], item[3], int(item[4]))
+        cursor.execute(mySql_insert_query, val)
+        print('[!] SUCESFUL: The MEMBER has been added into the database')
+
+    elif (op == BOOK):
+        # add book
+        # note: book = (name, author, edit, bType)
+        mySql_insert_query = 'INSERT IGNORE INTO Book (name, author, edition, type) VALUES (%s, %s, %s, %s)'
+        val = (item[0], item[1], item[2], item[3])
+        cursor.execute(mySql_insert_query, val)
+
+        # add stock
+        bookid = cursor.lastrowid  # get the id of just added book
+        mySql_insert_query = 'INSERT IGNORE INTO Stock (amount, book_id) VALUES (%s, %s)'
+        val = (item[4], bookid)
+        cursor.execute(mySql_insert_query, val)
+        print('[!] SUCCESSFUL: The stock has been added into the database')
+
+    else:
+        mySql_insert_query = 'INSERT IGNORE INTO `LoanDetails` (date, expireDate, book_id, member_id) VALUES (%s, %s, %s, %s)'
+        cursor.execute(mySql_insert_query,
+                        (item[0], item[1], item[2], item[3]))
+        print('[!] SUCCESSFUL: The LOAN detail has been added into the database')
