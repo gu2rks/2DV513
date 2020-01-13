@@ -72,6 +72,12 @@ def getMemberId(cursor, personNum):
     records = cursor.fetchall()
     return records
 
+def getBookId(cursor, name, edition):
+    mySql_select_query = "SELECT bkID FROM `Book` WHERE name = %s AND edition = %s"
+    cursor.execute(mySql_select_query, (name, edition))
+    records = cursor.fetchall()
+    return records
+
 """
 @op = opration code (book | member | loan)
 @item = item that need to be add in database (tuples)
@@ -83,21 +89,18 @@ def insertRecord(cursor, op, item):
         val = (item[0], item[1], item[2], item[3], int(item[4]))
         cursor.execute(mySql_insert_query, val)
         print('[!] SUCESFUL: The MEMBER has been added into the database')
-
     elif (op == BOOK):
         # add book
         # note: book = (name, author, edit, bType)
         mySql_insert_query = 'INSERT IGNORE INTO Book (name, author, edition, type) VALUES (%s, %s, %s, %s)'
         val = (item[0], item[1], item[2], item[3])
         cursor.execute(mySql_insert_query, val)
-
         # add stock
         bookid = cursor.lastrowid  # get the id of just added book
         mySql_insert_query = 'INSERT IGNORE INTO Stock (amount, book_id) VALUES (%s, %s)'
         val = (item[4], bookid)
         cursor.execute(mySql_insert_query, val)
         print('[!] SUCCESSFUL: The stock has been added into the database')
-
     else:
         mySql_insert_query = 'INSERT IGNORE INTO `LoanDetails` (date, expireDate, book_id, member_id) VALUES (%s, %s, %s, %s)'
         cursor.execute(mySql_insert_query,
@@ -141,3 +144,21 @@ def updateRecord(cursor, op, key):
         # return book -> increase the stock
         mySql_update_query = "UPDATE Stock SET amount = amount + 1 where Stock.book_id = %s;"
         cursor.execute(mySql_update_query, (key, ))
+
+def getBorrowedBookByMember(cursor, key):
+    mySql_select_query = """
+                        select *
+                        From Book
+                        where bkID in(
+                            SELECT book_id
+                            From LoanDetails
+                            JOIN `Member` ON LoanDetails.member_id = Member.memID
+                            WHERE personalNum = '%s'
+                        )"""
+    cursor.execute(mySql_select_query, (key,))
+    records = cursor.fetchall()
+    print('The following books have been borrow by this member')
+    count = 0
+    for book in records:
+        count = count + 1
+        print('%d Book name: %s \n\tAuthor: %s Edition: %s' %(count, book[1], book[2], book[3]))

@@ -107,18 +107,6 @@ class Controller:
         else:
             return False
 
-    def getBookId(self, cursor, name, edition):
-        mySql_select_query = "SELECT bkID FROM `Book` WHERE name = %s AND edition = %s"
-        cursor.execute(mySql_select_query, (name, edition))
-        records = cursor.fetchall()
-        return records
-
-    def getMemberId(self, cursor, personNum):
-        mySql_select_query = "SELECT memID FROM `Member` WHERE personalNum = '%s' "
-        cursor.execute(mySql_select_query, (personNum,))
-        records = cursor.fetchall()
-        return records
-        
     def bookHandler(self, cursor):
         choice = viewer.bookView()
         if (choice == 1):
@@ -126,7 +114,7 @@ class Controller:
             dbManager.insertRecord(cursor, BOOK, book)
         else:
             book = viewer.getBookID()
-            records = self.getBookId(cursor, book[0], book[1])
+            records = dbManager.getBookId(cursor, book[0], book[1])
             if not dbManager.isEmpty(BOOK, records): 
                 if (choice == 2):
                         bookId = records[0]
@@ -158,27 +146,9 @@ class Controller:
                     cursor.execute(mySql_select_query, (memberId[0],))
                     records = cursor.fetchall()
                     if not dbManager.isEmpty(LOAN, records):
-                        self.getBorrowedBookByMember(cursor, personNum)
+                        dbManager.getBorrowedBookByMember(cursor, personNum)
             else:
                 viewer.invalidInput()
-    
-    def getBorrowedBookByMember(self, cursor, key):
-        mySql_select_query = """
-                            select *
-                            From Book
-                            where bkID in(
-                                SELECT book_id
-                                From LoanDetails
-                                JOIN `Member` ON LoanDetails.member_id = Member.memID
-                                WHERE personalNum = '%s'
-                            )"""
-        cursor.execute(mySql_select_query, (key,))
-        records = cursor.fetchall()
-        print('The following books have been borrow by this member')
-        count = 0
-        for book in records:
-            count = count + 1
-            print('%d Book name: %s \n\tAuthor: %s Edition: %s' %(count, book[1], book[2], book[3]))
 
     def updateRecord(self, cursor, op, key):
         if (op == 'member'):
