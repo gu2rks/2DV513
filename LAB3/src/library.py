@@ -85,6 +85,8 @@ class Controller:
             if self.validation(LOAN, exprie):
                 date = datetime.date(int(exprie[0]), int(exprie[1]), int(exprie[2]))
                 dbManager.getMemberbyExpriedDay(cursor,date)
+        elif (choice == 4):
+            pass
         else:
             viewer.invalidInput()
 
@@ -93,7 +95,9 @@ class Controller:
         if (choice == 1):
             book = viewer.addBook()  # book as tuple
             dbManager.insertRecord(cursor, BOOK, book)
-        else:
+        elif (choice == 4):
+            pass            
+        elif (choice >= 2 and choice <= 3):
             book = viewer.getBookID()
             records = dbManager.getBookId(cursor, book[0], book[1])
             if not dbManager.isEmpty(BOOK, records): 
@@ -102,9 +106,9 @@ class Controller:
                         dbManager.deleteRecord(cursor, BOOK, bookId[0])
                 elif (choice == 3):
                         bookId = records[0]
-                        dbManager.updateRecord(cursor, BOOK, bookId[0])            
-            else:
-                viewer.invalidInput()
+                        dbManager.updateRecord(cursor, BOOK, bookId[0])
+        else:
+            viewer.invalidInput()
 
     def memberHandler(self, cursor):
         choice = viewer.memberView()
@@ -113,7 +117,9 @@ class Controller:
             personNum = member[4]
             if (self.validation(MEMBER, personNum)):
                 dbManager.insertRecord(cursor, MEMBER, member)
-        else:
+        elif (choice == 5):
+            pass
+        elif (choice >= 2 and choice <= 4):
             personNum = viewer.getPersonNum()
             records = dbManager.getMemberId(cursor, personNum)
             # check if member exist in database
@@ -130,8 +136,8 @@ class Controller:
                     records = cursor.fetchall()
                     if not dbManager.isEmpty(LOAN, records):
                         dbManager.getBorrowedBookByMember(cursor, personNum)
-            else:
-                viewer.invalidInput()
+        else:
+            viewer.invalidInput()
 
     def validation(self, op, toValidate):
         if (op == MEMBER):
