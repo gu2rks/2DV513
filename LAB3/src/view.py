@@ -21,7 +21,7 @@ def memberView(): #member menu
     return int(input('# '))
 
 def loanView():
-    print('Press 1: Borrow book (Delete loan detail)')
+    print('Press 1: Borrow book (Add loan detail)')
     print('Press 2: Return book (Delete loan detail')
     print('Press 3: Get member info base on expried day')
     return int(input('# '))
