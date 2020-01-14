@@ -2,7 +2,7 @@ def homeView(): # main menu/home page
     print('Press 1: Manage member')
     print('Press 2: Manage book')
     print('Press 3: Manage loan')
-    print('Press 4: Get most read book (best book)')
+    print('Press 4: Get most read book (popular book)')
     print('Press 5: Get best reader')
     print('Press 6: exit')
     return int(input('# '))
@@ -11,6 +11,7 @@ def bookView(): # book manu
     print('Press 1: Add book')
     print('Press 2: Delete book')
     print('Press 3: Edit book')
+    print('Press 4: return')
     return int(input('# '))
 
 def memberView(): #member menu
@@ -18,12 +19,14 @@ def memberView(): #member menu
     print('press 2: Delete member')
     print('press 3: Edit member')
     print('press 4: Get borrowed book by specific member')
+    print('Press 5: return')
     return int(input('# '))
 
 def loanView():
-    print('Press 1: Borrow book (Delete loan detail)')
+    print('Press 1: Borrow book (Add loan detail)')
     print('Press 2: Return book (Delete loan detail')
     print('Press 3: Get member info base on expried day')
+    print('Press 4: return')
     return int(input('# '))
 
 def addBook(): # add book
