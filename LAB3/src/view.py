@@ -39,7 +39,7 @@ def addBook(): # add book
 def bookType():
     print('Please choose one of the following genres, for instance Press 7 for Fantasy book')
     print('1. Children \n2. Drama \n3. Fantasy \n4. Horror \n5. Romance \n6. Science fiction \n7. ETC')
-    reps = input('#: ')
+    reps = int(input('#: '))
     if reps == 1:
         return 'Children'
     elif reps == 2:
@@ -66,11 +66,11 @@ def addMember(): # add member
     return member
 
 def genderValidate():
-    reps = input('Press 1: Female \nPress 1: Male\n# :')
+    reps = int(input('Press 1: Female \nPress 2: Male\n# :'))
     if reps == 1:
-        return 'male'
-    else:
         return 'female'
+    else:
+        return 'male'
     
 
 def getPersonNum(): # delete member

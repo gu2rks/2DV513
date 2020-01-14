@@ -135,9 +135,9 @@ class Controller:
 
     def validation(self, op, toValidate):
         if (op == MEMBER):
-            m = int(toValidate[2:4])
-            d = int(toValidate[4:6])
             if (len(toValidate) == 10):
+                m = int(toValidate[2:4])
+                d = int(toValidate[4:6])
                 if (m > 0 and m < 13):
                     if(d > 0 and d < 32):
                         return True

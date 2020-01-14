@@ -93,6 +93,13 @@ where bkID in(
 
 ```
 
+delete and ignore FK constrain problem 
+```sql
+SET FOREIGN_KEY_CHECKS = 0;
+truncate table `Member`;
+SET FOREIGN_KEY_CHECKS = 1;
+```
+
 # book type
 1.  Children's 
 2.  Drama 
@@ -102,3 +109,4 @@ where bkID in(
 6.      Science fiction 
 7.       Biography 
 8.       ETC
+
