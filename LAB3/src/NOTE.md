@@ -110,3 +110,13 @@ SET FOREIGN_KEY_CHECKS = 1;
 7.       Biography 
 8.       ETC
 
+## video
+- show everything
+- add delete member
+- add book
+- borrow a book 
+- return a book
+- check expried book by date
+- best reader
+- best book
+- get borrowed book
